@@ -10,7 +10,7 @@ module Opbeat
           begin
             Opbeat.report exception, rack_env: env
           rescue
-            ::Rails::logger.debug "* [Opbeat] Error capturing or sending exception #{$!}"
+            ::Rails::logger.debug "** [Opbeat] Error capturing or sending exception #{$!}"
           end
 
           render_exception_without_opbeat(env, exception)

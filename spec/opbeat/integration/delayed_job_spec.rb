@@ -1,10 +1,12 @@
 require 'spec_helper'
 
+# :nocov:
 begin
   require 'delayed_job'
 rescue LoadError
   puts "Skipping delayed_job specs"
 end
+# :nocov:
 
 if defined?(Delayed)
   # so nasty

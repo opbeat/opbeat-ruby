@@ -11,7 +11,8 @@ module Opbeat
       backoff_multiplier: 2,
       use_ssl: true,
       current_user_method: :current_user,
-      async: false
+      async: false,
+      filter_parameters: [/(authorization|password|passwd|secret)/i]
     }.freeze
 
     attr_accessor :server

@@ -4,18 +4,23 @@ module Opbeat
   RSpec.describe ErrorMessage::HTTP do
 
     describe ".from_rack_env" do
+      let(:config) { Configuration.new }
+
       it "initializes with a rack env" do
-        env = Rack::MockRequest.env_for '/nested/path?a=1', {
+        filter = Filter.new config
+
+        env = Rack::MockRequest.env_for '/nested/path?a=1&password=SECRET', {
           'HTTP_COOKIE' => 'user_id=1',
           'REMOTE_ADDR' => '1.2.3.4',
           'HTTP_USER_AGENT'  => 'test-agent 1.2/3',
           'HTTP_FOO' => 'bar'
         }
-        http = ErrorMessage::HTTP.from_rack_env env
+
+        http = ErrorMessage::HTTP.from_rack_env env, filter: filter
 
         expect(http.url).to eq 'http://example.org/nested/path'
         expect(http.method).to eq 'GET'
-        expect(http.query_string).to eq 'a=1'
+        expect(http.query_string).to eq 'a=1&password=[FILTERED]'
         expect(http.cookies).to eq('user_id=1')
         expect(http.remote_host).to eq '1.2.3.4'
         expect(http.http_host).to eq 'example.org:80'

@@ -3,7 +3,7 @@ module Opbeat
     class HTTP < Struct.new(:url, :method, :data, :query_string, :cookies,
                             :headers, :remote_host, :http_host, :user_agent,
                             :secure, :env)
-      def self.from_rack_env env
+      def self.from_rack_env env, filter: nil
         req = Rack::Request.new env
 
         http = new(
@@ -39,7 +39,17 @@ module Opbeat
           req.body.rewind
         end
 
+        if filter
+          http.apply_filter filter
+        end
+
         http
+      end
+
+      def apply_filter filter
+        self.data = filter.apply data
+        self.query_string = filter.apply query_string
+        self.cookies = filter.apply cookies
       end
     end
   end

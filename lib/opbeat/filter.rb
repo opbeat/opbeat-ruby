@@ -1,63 +1,72 @@
 module Opbeat
   class Filter
-    MASK = '[FILTERED]'
-    DEFAULT_FILTER = [/(authorization|password|passwd|secret)/i]
 
-    def initialize(filters=nil)
-      if defined?(::Rails)
-        rails_filters = ::Rails.application.config.filter_parameters
-        rails_filters = nil if rails_filters.count == 0
-      end
-      @filters = filters || rails_filters || DEFAULT_FILTER
+    MASK = '[FILTERED]'.freeze
+
+    def initialize config
+      @config = config
+      @params = rails_filters || config.filter_parameters
     end
 
-    def apply(value, key=nil, &block)
-      if value.is_a?(Hash)
-        value.each.inject({}) do |memo, (k, v)|
-          memo[k] = apply(v, k, &block)
-          memo
+    attr_reader :config
+
+    def apply data, opts = {}
+      case data
+      when String
+        apply_to_string data, opts = {}
+      when Hash
+        apply_to_hash data
+      end
+    end
+
+    def apply_to_string str, opts = {}
+      sep = opts[:separator] || '&'.freeze
+      kv_sep = opts[:kv_separator] || '='.freeze
+
+      str.split(sep).map do |kv|
+        key, value = kv.split(kv_sep)
+        [key, kv_sep, sanitize(key, value)].join
+      end.join(sep)
+    end
+
+    def apply_to_hash hsh
+      hsh.inject({}) do |filtered, kv|
+        key, value = kv
+        filtered[key] = sanitize(key, value)
+        filtered
+      end
+    end
+
+    def sanitize key, value
+      return value unless value.is_a?(String)
+
+      if should_filter?(key)
+        return MASK
+      end
+
+      value
+    end
+
+    private
+
+    def should_filter? key
+      @params.any? do |param|
+        case param
+        when String
+          key.to_s == param.to_s
+        when Regexp
+          param.match(key)
         end
-      elsif value.is_a?(Array)
-        value.map do |value|
-          apply(value, key, &block)
+      end
+    end
+
+    def rails_filters
+      if defined?(::Rails) && Rails.application
+        if filters = ::Rails.application.config.filter_parameters
+          filters.any? ? filters : nil
         end
-      else
-        block.call(key, value)
       end
     end
 
-    def sanitize(key, value)
-      if !value.is_a?(String) || value.empty?
-        value
-      elsif @filters.any? { |filter| filter.is_a?(Regexp) ? filter.match(key) : filter.to_s == key.to_s }
-        MASK
-      else
-        value
-      end
-    end
-
-    def process_event_hash(data)
-      return data unless data.has_key? 'http'
-      if data['http'].has_key? 'data'
-        data['http']['data'] = process_hash(data['http']['data'])
-      end
-      if data['http'].has_key? 'query_string'
-        data['http']['query_string'] = process_string(data['http']['query_string'], '&')
-      end
-      if data['http'].has_key? 'cookies'
-        data['http']['cookies'] = process_string(data['http']['cookies'], ';')
-      end
-      data
-    end
-
-    def process_hash(data)
-      apply(data) do |key, value|
-        sanitize(key, value)
-      end
-    end
-
-    def process_string(str, separator='&')
-      str.split(separator).map { |s| s.split('=') }.map { |a| a[0]+'='+sanitize(a[0], a[1]) }.join(separator)
-    end
   end
 end

@@ -21,9 +21,13 @@ module Opbeat
       end
 
       if !config.enabled_environments.include?(Rails.env)
-        Rails.logger.info "[Opbeat] Not running in #{Rails.env} mode"
+        # :nocov:
+        Rails.logger.info "** [Opbeat] Not running in #{Rails.env} mode"
+        # :nocov:
       elsif !Opbeat.start!(config)
-        Rails.logger.info "[Opbeat] Failed to start"
+        # :nocov:
+        Rails.logger.info "** [Opbeat] Failed to start"
+        # :nocov:
       else
         app.config.middleware.insert 0, Middleware, config: config
       end
@@ -37,9 +41,11 @@ module Opbeat
       end
     end
 
+    # :nocov:
     rake_tasks do
       require 'opbeat/tasks'
     end
+    # :nocov:
 
   end
 end

@@ -29,7 +29,9 @@ module Opbeat
             extra: nil,
             param_message: nil,
             exception: Hash,
-            stacktrace: Hash
+            stacktrace: Hash,
+            http: Hash,
+            user: Hash
           })
         end
         it "converts to json just fine" do

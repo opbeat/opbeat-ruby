@@ -1,10 +1,12 @@
 require 'spec_helper'
 
+# :nocov:
 begin
   require 'resque'
 rescue LoadError
   puts 'Skipping Resque specs'
 end
+# :nocov:
 
 if defined? Resque
   RSpec.describe 'Resque integration', start: true do

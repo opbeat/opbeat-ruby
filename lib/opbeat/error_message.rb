@@ -20,6 +20,7 @@ module Opbeat
       DEFAULTS.merge(attrs).each do |k,v|
         send(:"#{k}=", v)
       end
+      @filter = Filter.new config
 
       yield self if block_given?
     end
@@ -48,7 +49,7 @@ module Opbeat
       end
 
       if env = opts[:rack_env]
-        error_message.http = HTTP.from_rack_env env
+        error_message.http = HTTP.from_rack_env env, filter: @filter
         error_message.user = User.from_rack_env config, env
       end
 

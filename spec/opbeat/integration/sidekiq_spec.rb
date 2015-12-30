@@ -1,10 +1,12 @@
 require 'spec_helper'
 
+# :nocov:
 begin
   require 'sidekiq'
 rescue LoadError
   puts 'Skipping Sidekiq specs'
 end
+# :nocov:
 
 if defined?(Sidekiq)
   require 'sidekiq/testing'

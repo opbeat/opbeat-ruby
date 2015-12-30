@@ -16,7 +16,7 @@ describe 'Rails integration' do
 
   before :all do
     class TinderButForHotDogs < ::Rails::Application
-      config.secret_key_base = '6LXCXKANDLAcK7U_xknVsyZNEEgop2ovYcjnVV_fFiI'
+      config.secret_key_base = '__secret_key_base'
 
       config.logger = Logger.new(STDOUT)
       config.logger.level = Logger::DEBUG
@@ -52,10 +52,6 @@ describe 'Rails integration' do
     Opbeat::Client.inst.queue.clear
   end
 
-  it "doesn't explode" do
-    get '/users'
-  end
-
   it "adds an exception handler and handles exceptions" do
     get '/404'
 
@@ -68,5 +64,14 @@ describe 'Rails integration' do
     get '/users'
 
     expect(Opbeat::Client.inst.queue.length).to be 1
+  end
+
+  it "logs when failing to report error" do
+    allow(Opbeat::Client.inst).to receive(:report).and_raise
+    allow(Rails.logger).to receive(:debug)
+
+    get '/404'
+
+    expect(Rails.logger).to have_received(:debug).with(/\*\* \[Opbeat\] Error capturing/)
   end
 end
