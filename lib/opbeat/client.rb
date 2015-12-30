@@ -105,7 +105,7 @@ module Opbeat
     end
 
     def enqueue transaction
-      debug { Util::Inspector.new.transaction transaction }
+      # debug { Util::Inspector.new.transaction transaction }
       @queue << transaction
     end
 
