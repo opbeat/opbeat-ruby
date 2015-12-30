@@ -9,7 +9,7 @@ module Opbeat
       begin
         transaction = Opbeat.transaction "Rack", "app.rack.request"
         resp = @app.call env
-        transaction.submit resp.first
+        transaction.submit(resp.first)
       rescue Error
         raise # Don't report Opbeat errors
       rescue Exception => e

@@ -35,4 +35,11 @@ RSpec.configure do |config|
     example.run
     Timecop.return
   end
+
+  config.around :each, start: true do |example|
+    config = Opbeat::Configuration.new
+    Opbeat.start! config
+    example.call
+    Opbeat.stop!
+  end
 end

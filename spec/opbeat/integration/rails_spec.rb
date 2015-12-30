@@ -41,6 +41,7 @@ describe 'Rails integration' do
     Object.send(:remove_const, :TinderButForHotDogs)
     Object.send(:remove_const, :UsersController)
     Rails.application = nil
+    Opbeat.stop!
   end
 
   def app
