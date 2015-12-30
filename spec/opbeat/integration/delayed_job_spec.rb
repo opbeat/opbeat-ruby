@@ -14,16 +14,12 @@ if defined?(Delayed)
   )
   Delayed::Worker.backend = Delayed::Backend::Test::Job
 
-  describe Delayed::Plugins::Opbeat do
+  describe Delayed::Plugins::Opbeat, start: true do
     class MyJob
       def blow_up e
         raise e
       end
     end
-
-    let(:config) { Opbeat::Configuration.new }
-    before { Opbeat.start! config }
-    after  { Opbeat.stop! }
 
     it "reports exceptions to Opbeat" do
       exception = Exception.new('BOOM')

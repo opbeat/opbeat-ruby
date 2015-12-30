@@ -9,6 +9,7 @@ require 'opbeat/middleware'
 
 require 'opbeat/integration/railtie' if defined?(Rails)
 require 'opbeat/integration/delayed_job'
+require 'opbeat/integration/sidekiq'
 
 module Opbeat
   class << self

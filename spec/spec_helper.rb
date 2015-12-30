@@ -43,3 +43,19 @@ RSpec.configure do |config|
     Opbeat.stop!
   end
 end
+
+RSpec::Matchers.define :delegate do |method, to:|
+  match do |delegator|
+  unless to.respond_to?(method)
+    raise NoMethodError.new("no method :#{method} on #{to}")
+  end
+
+  allow(to).to receive(method) { true }
+  delegator.send method
+end
+
+description do
+  "delegate :#{method} to #{to}"
+end
+end
+
