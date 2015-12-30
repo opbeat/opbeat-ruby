@@ -10,6 +10,8 @@ gem 'rack-test'
 
 # external libs
 
-gem 'sidekiq'
-gem 'delayed_job'
+gem 'sidekiq', require: false
+gem 'delayed_job', require: false
+gem 'mock_redis', require: false
+gem 'resque', require: false
 

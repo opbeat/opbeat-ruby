@@ -8,8 +8,10 @@ require 'opbeat/error'
 require 'opbeat/middleware'
 
 require 'opbeat/integration/railtie' if defined?(Rails)
+
 require 'opbeat/integration/delayed_job'
 require 'opbeat/integration/sidekiq'
+require 'opbeat/integration/resque'
 
 module Opbeat
   class << self
