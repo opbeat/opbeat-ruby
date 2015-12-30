@@ -140,9 +140,14 @@ module Opbeat
         exception.set_backtrace caller
       end
 
-      error_message = ErrorMessage.from_exception(config, exception)
-      data = DataBuilders::Error.new(config).build error_message
-      @http_client.post '/errors/', data
+      begin
+        error_message = ErrorMessage.from_exception(config, exception)
+        data = DataBuilders::Error.new(config).build error_message
+        @http_client.post '/errors/', data
+      rescue => e
+        fatal "Failed to report error: #{e}"
+        debug "error_message:#{error_message}"
+      end
     end
 
     def capture

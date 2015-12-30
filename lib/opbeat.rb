@@ -8,6 +8,7 @@ require 'opbeat/error'
 require 'opbeat/middleware'
 
 require 'opbeat/integration/railtie' if defined?(Rails)
+require 'opbeat/integration/delayed_job'
 
 module Opbeat
   class << self
@@ -17,7 +18,11 @@ module Opbeat
 
     # Here for the delegator
     def client
-      Client.inst
+      unless client = Client.inst
+        puts "Opbeat client wasn't started"
+      end
+
+      client
     end
   end
 
