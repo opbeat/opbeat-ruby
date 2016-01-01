@@ -65,7 +65,6 @@ module Opbeat
       info "Starting client"
 
       @subscriber.register!
-      start_worker unless worker_running?
 
       self
     end
@@ -105,6 +104,7 @@ module Opbeat
     end
 
     def enqueue transaction
+      start_worker
       # debug { Util::Inspector.new.transaction transaction }
       @queue << transaction
     end
@@ -112,7 +112,7 @@ module Opbeat
     def start_worker
       return if worker_running?
 
-      info "Starting worker in thread"
+      info { "Starting worker in thread".freeze }
 
       @worker_thread = Thread.new do
         begin

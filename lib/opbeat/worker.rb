@@ -16,6 +16,7 @@ module Opbeat
 
     def run
       loop do
+        info "Sending pending transactions: #{@queue.length}"
         send_transactions
         sleep 10
       end
