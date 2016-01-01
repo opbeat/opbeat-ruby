@@ -3,18 +3,12 @@ require 'rails'
 
 module Opbeat
   class Railtie < Rails::Railtie
-    config.opbeat = ActiveSupport::OrderedOptions.new
 
-    Configuration::DEFAULTS.each do |k, v|
-      config.opbeat.send("#{k}=", v)
-    end
+    config.opbeat = ActiveSupport::OrderedOptions.new
+    config.opbeat.enabled_environments = Configuration::DEFAULTS[:enabled_environments]
 
     initializer "opbeat.configure" do |app|
       config = Configuration.new app.config.opbeat do |conf|
-        # auth
-        conf.app_id = app.config.opbeat.app_id
-        conf.organization_id = app.config.opbeat.organization_id
-        conf.secret_token = app.config.opbeat.secret_token
         # Rails specifics
         conf.logger = Rails.logger
         conf.view_paths = app.config.paths['app/views'].existent
