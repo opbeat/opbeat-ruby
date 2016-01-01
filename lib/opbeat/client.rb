@@ -145,7 +145,7 @@ module Opbeat
         data = DataBuilders::Error.new(config).build error_message
         @http_client.post '/errors/', data
       rescue => e
-        fatal "Failed to report error: #{e}"
+        fatal "Failed to report error: #{e.inspect}"
         debug "error_message:#{error_message}"
       end
     end
