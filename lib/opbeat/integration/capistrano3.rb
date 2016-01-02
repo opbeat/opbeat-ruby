@@ -14,7 +14,7 @@ namespace :opbeat do
 
       within release_path do
         with rails_env: fetch(:rails_env), rev: rev, branch: branch do
-          capture :rake, 'opbeat:deployment'
+          capture :rake, 'opbeat:release'
         end
       end
     end

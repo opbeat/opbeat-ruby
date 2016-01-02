@@ -30,7 +30,7 @@ module Opbeat
             notify_command << "RAILS_ENV=#{rails_env} "
 
             executable = fetch(:rake, 'bundle exec rake ')
-            notify_command << "#{executable} opbeat:deployment"
+            notify_command << "#{executable} opbeat:release"
             capture notify_command, :once => true
 
           end
