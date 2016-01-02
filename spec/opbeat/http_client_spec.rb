@@ -5,8 +5,6 @@ module Opbeat
 
     let(:configuration) do
       Configuration.new do |c|
-        c.enabled_environments = ["test"]
-        c.environment = :test
         c.secret_token = 'TOKEN'
         c.organization_id = 'ORG'
         c.app_id = 'APP'
@@ -46,12 +44,6 @@ module Opbeat
       it "raises when server returns error" do
         stub_request(:post, /.*/).and_return(status: 500)
         expect { subject }.to raise_error(Error)
-      end
-
-      it "only posts in selected envs" do
-        configuration.environment = :other
-        subject
-        expect(WebMock).to_not have_requested(:any, /.*/)
       end
     end
 

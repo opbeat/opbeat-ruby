@@ -23,11 +23,6 @@ module Opbeat
       path = abs_path(resource)
       debug "POST #{path}"
 
-      unless config.enabled_environments.include? config.environment.to_s
-        info "Skipping POST in #{config.environment} env"
-        return
-      end
-
       unless state.should_try?
         info "Temporarily skipping sending to Opbeat due to previous failure."
         return
