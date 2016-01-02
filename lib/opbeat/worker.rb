@@ -38,7 +38,7 @@ module Opbeat
       info "Post #{transactions.length} transactions"
       begin
         data = @data_builder.build(transactions)
-        # debug JSON.pretty_generate(data)
+        # debug { JSON.pretty_generate(data) }
         @http_client.post('/transactions/', JSON.dump(data))
       rescue => e
         info "Failed POST #{e.inspect}"

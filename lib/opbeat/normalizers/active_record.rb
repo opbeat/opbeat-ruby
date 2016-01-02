@@ -21,6 +21,8 @@ module Opbeat
         def signature_for sql
           if match = sql.match(SIG_REGEX)
             "#{match[1]} #{match[2]}"
+          else
+            sql
           end
         end
       end
