@@ -4,14 +4,18 @@ module Opbeat
       class SQL < Normalizer
         register 'sql.active_record'
         KIND = 'db.sql'.freeze
-        SIG_REGEX = /^(\w+).*(FROM "\w+")/.freeze
+
+        def initialize *args
+          super(*args)
+          @sql_parser = SqlParser.new config
+        end
 
         def normalize transaction, name, payload
           if %w{SCHEMA CACHE}.include? payload[:name]
             return :skip
           end
 
-          signature = signature_for payload[:sql]
+          signature = signature_for(payload[:sql]) || payload[:name] || "SQL".freeze
 
           [signature, KIND, { sql: payload[:sql] }]
         end
@@ -19,11 +23,29 @@ module Opbeat
         private
 
         def signature_for sql
-          if match = sql.match(SIG_REGEX)
-            "#{match[1]} #{match[2]}"
-          else
-            sql
-          end
+          @sql_parser.signature_for(sql)
+        end
+      end
+    end
+  end
+
+  class SqlParser
+    CACHE = {}
+    REGEXES = {
+      /^SELECT (\*|[a-z,\s]+) FROM ([^\s]+)/i => lambda { |m| "SELECT FROM #{m[2]}" },
+      /^INSERT INTO ([\w"']+)/i => lambda { |m| "INSERT INTO #{m[1]}" }
+    }
+
+    def initialize config
+      @config = config
+    end
+
+    def signature_for sql
+      return CACHE[sql] if CACHE[sql]
+
+      REGEXES.find do |regex, sig|
+        if match = sql.match(regex)
+          break sig.call(match)
         end
       end
     end

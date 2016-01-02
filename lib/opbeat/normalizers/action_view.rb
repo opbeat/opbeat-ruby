@@ -13,17 +13,17 @@ module Opbeat
 
         def path_for identifier
           return "Unknown template".freeze unless path = identifier
-          return path unless path.starts_with?("/")
+          return path unless path.start_with?("/")
 
           path && relative_path(path)
         end
 
         def relative_path path
-          root = config.view_paths.find { |p| path.starts_with? p }
+          root = config.view_paths.find { |p| path.start_with? p }
           type = :app
 
           unless root
-            root = Gem.path.find { |p| path.starts_with? p }
+            root = Gem.path.find { |p| path.start_with? p }
             type = :gem
           end
 
