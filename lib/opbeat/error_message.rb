@@ -6,6 +6,7 @@ require 'opbeat/error_message/user'
 
 module Opbeat
   class ErrorMessage
+    extend Logging
 
     DEFAULTS = {
       level: :error,
@@ -42,10 +43,21 @@ module Opbeat
     def self.from_exception config, exception, opts = {}
       message = "#{exception.class}: #{exception.message}"
 
+      if config.excluded_exceptions.include? exception.class.to_s
+        info "Skipping excluded exception #{exception.class}"
+        return nil
+      end
+
       error_message = new(config, message) do |msg|
         msg.level = :error
         msg.exception = Exception.from(exception)
         msg.stacktrace = Stacktrace.from(config, exception)
+      end
+
+      if frames = error_message.stacktrace && error_message.stacktrace.frames
+        if last_frame = frames[-2]
+          error_message.culprit = "#{last_frame.filename} in #{last_frame.function}"
+        end
       end
 
       if env = opts[:rack_env]

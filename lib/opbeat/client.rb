@@ -136,6 +136,8 @@ module Opbeat
     # errors
 
     def report exception, opts = {}
+      return unless exception
+
       unless exception.backtrace
         exception.set_backtrace caller
       end

@@ -72,6 +72,11 @@ module Opbeat
             body: /{"message":"Exception: BOOM/
           })
         end
+
+        it "skips nil exceptions" do
+          subject.report nil
+          expect(WebMock).to_not have_requested(:post, %r{/errors/$})
+        end
       end
 
       describe "#capture" do

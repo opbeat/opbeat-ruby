@@ -35,6 +35,16 @@ module Opbeat
         expect(error.stacktrace.frames.length).to be 33
         expect(error.stacktrace.frames.map(&:class).uniq)
           .to eq [ErrorMessage::Stacktrace::Frame]
+        expect(error.culprit).to eq 'opbeat/error_message_spec.rb in real_exception'
+      end
+
+      it "skips excluded exceptions" do
+        class ::SleepDeprivationError < StandardError; end
+        exception = SleepDeprivationError.new('so tired')
+        config.excluded_exceptions += %w{SleepDeprivationError}
+
+        error = ErrorMessage.from_exception config, exception
+        expect(error).to be_nil
       end
 
       context "with a rack env" do
