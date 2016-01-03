@@ -1,12 +1,15 @@
+require 'opbeat/sql_parser'
+
 module Opbeat
   module Normalizers
     module ActiveRecord
       class SQL < Normalizer
         register 'sql.active_record'
-        KIND = 'db.sql'.freeze
 
         def initialize *args
           super(*args)
+          adapter = ::ActiveRecord::Base.connection.adapter_name.downcase rescue nil
+          @kind = "db.#{adapter || 'unknown'}.sql".freeze
           @sql_parser = SqlParser.new config
         end
 
@@ -17,38 +20,13 @@ module Opbeat
 
           signature = signature_for(payload[:sql]) || payload[:name] || "SQL".freeze
 
-          [signature, KIND, { sql: payload[:sql] }]
+          [signature, @kind, { sql: payload[:sql] }]
         end
 
         private
 
         def signature_for sql
           @sql_parser.signature_for(sql)
-        end
-      end
-    end
-  end
-
-  class SqlParser
-    CACHE = {}
-    TBL = "[^ ]+".freeze
-    REGEXES = {
-      /^SELECT .* FROM (#{TBL})/i => lambda { |m| "SELECT FROM #{m[1]}" },
-      /^INSERT INTO (#{TBL})/i => lambda { |m| "INSERT INTO #{m[1]}" },
-      /^UPDATE (#{TBL})/i => lambda { |m| "UPDATE #{m[1]}" },
-      /^DELETE FROM (#{TBL})/i => lambda { |m| "DELETE FROM #{m[1]}" }
-    }
-
-    def initialize config
-      @config = config
-    end
-
-    def signature_for sql
-      return CACHE[sql] if CACHE[sql]
-
-      REGEXES.find do |regex, sig|
-        if match = sql.match(regex)
-          break sig.call(match)
         end
       end
     end

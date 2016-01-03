@@ -26,7 +26,7 @@ module Opbeat
           sql = 'SELECT  "hotdogs".* FROM "hotdogs" WHERE "hotdogs"."topping" = $1 LIMIT 1'
           signature, kind, extra = normalize(name: 'Hotdogs load', sql: sql)
           expect(signature).to eq 'SELECT FROM "hotdogs"'
-          expect(kind).to eq 'db.sql'
+          expect(kind).to eq 'db.unknown.sql'
           expect(extra).to eq sql: sql
         end
 
@@ -46,6 +46,18 @@ module Opbeat
           sig, _, _ = normalize(name: 'Hotdogs delete',
                                 sql: 'delete from "hotdogs" where id=1')
           expect(sig).to eq 'DELETE FROM "hotdogs"'
+        end
+
+        context "inside AR" do
+          before do
+            module ::ActiveRecord; class Base; end; end unless defined? ActiveRecord
+            allow(::ActiveRecord::Base).to receive(:connection) { double(adapter_name: 'MySQL') }
+          end
+          it "knows the ar adapter" do
+            _, kind, _ = normalize(name: 'Hotdogs load',
+                                   sql: 'select * from "hotdogs"')
+            expect(kind).to eq 'db.mysql.sql'
+          end
         end
 
         def normalize payload
