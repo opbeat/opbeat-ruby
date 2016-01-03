@@ -21,7 +21,7 @@ module Opbeat
           error_message = ErrorMessage.from_exception config, real_exception
           expect(subject.build error_message).to match({
             message: String,
-            timestamp: Time,
+            timestamp: Integer,
             level: :error,
             logger: 'root',
             culprit: nil,
@@ -29,9 +29,7 @@ module Opbeat
             extra: nil,
             param_message: nil,
             exception: Hash,
-            stacktrace: Hash,
-            http: Hash,
-            user: Hash
+            stacktrace: Hash
           })
         end
         it "converts to json just fine" do
