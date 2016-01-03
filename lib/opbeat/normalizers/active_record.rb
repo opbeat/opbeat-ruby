@@ -31,9 +31,12 @@ module Opbeat
 
   class SqlParser
     CACHE = {}
+    TBL = "[^ ]+".freeze
     REGEXES = {
-      /^SELECT (\*|[a-z,\s]+) FROM ([^\s]+)/i => lambda { |m| "SELECT FROM #{m[2]}" },
-      /^INSERT INTO ([\w"']+)/i => lambda { |m| "INSERT INTO #{m[1]}" }
+      /^SELECT .* FROM (#{TBL})/i => lambda { |m| "SELECT FROM #{m[1]}" },
+      /^INSERT INTO (#{TBL})/i => lambda { |m| "INSERT INTO #{m[1]}" },
+      /^UPDATE (#{TBL})/i => lambda { |m| "UPDATE #{m[1]}" },
+      /^DELETE FROM (#{TBL})/i => lambda { |m| "DELETE FROM #{m[1]}" }
     }
 
     def initialize config

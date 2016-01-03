@@ -23,16 +23,29 @@ module Opbeat
         end
 
         it "normalizes SELECT queries" do
-          signature, kind, extra = normalize(name: 'Users load', sql: 'select * from "hotdogs" where id = $1')
+          sql = 'SELECT  "hotdogs".* FROM "hotdogs" WHERE "hotdogs"."topping" = $1 LIMIT 1'
+          signature, kind, extra = normalize(name: 'Hotdogs load', sql: sql)
           expect(signature).to eq 'SELECT FROM "hotdogs"'
           expect(kind).to eq 'db.sql'
-          expect(extra).to eq sql: 'select * from "hotdogs" where id = $1'
+          expect(extra).to eq sql: sql
         end
 
         it "normalizes INSERT queries" do
-          sig, _, _ = normalize(name: 'Users create',
+          sig, _, _ = normalize(name: 'Hotdogs create',
                                 sql: 'insert into "hotdogs" (kind, topping) values ($1, $2)')
           expect(sig).to eq 'INSERT INTO "hotdogs"'
+        end
+
+        it "normalizes UPDATE queries" do
+          sig, _, _ = normalize(name: 'Hotdogs update',
+                                sql: 'update "hotdogs" (topping) values ($1) where id=1')
+          expect(sig).to eq 'UPDATE "hotdogs"'
+        end
+
+        it "normalizes DELETE queries" do
+          sig, _, _ = normalize(name: 'Hotdogs delete',
+                                sql: 'delete from "hotdogs" where id=1')
+          expect(sig).to eq 'DELETE FROM "hotdogs"'
         end
 
         def normalize payload
