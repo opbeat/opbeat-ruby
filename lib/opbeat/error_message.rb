@@ -56,7 +56,7 @@ module Opbeat
 
       if frames = error_message.stacktrace && error_message.stacktrace.frames
         if first_frame = frames[0]
-          error_message.culprit = "#{first_frame.filename} in #{first_frame.function}"
+          error_message.culprit = "#{first_frame.filename}:#{first_frame.lineno}:in `#{first_frame.function}'"
         end
       end
 

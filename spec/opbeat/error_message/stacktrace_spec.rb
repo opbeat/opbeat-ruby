@@ -18,7 +18,7 @@ module Opbeat
         expect(stacktrace.frames).to_not be_empty
 
         # so meta
-        last_frame = stacktrace.frames.last
+        last_frame = stacktrace.frames.first
         expect(last_frame.filename).to eq "opbeat/error_message/stacktrace_spec.rb"
         expect(last_frame.lineno).to be 7
         expect(last_frame.abs_path).to_not be_nil

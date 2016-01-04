@@ -35,7 +35,7 @@ module Opbeat
         expect(error.stacktrace.frames.length).to be 33
         expect(error.stacktrace.frames.map(&:class).uniq)
           .to eq [ErrorMessage::Stacktrace::Frame]
-        expect(error.culprit).to eq 'opbeat/error_message_spec.rb in /'
+        expect(error.culprit).to eq "opbeat/error_message_spec.rb:9:in `/'"
       end
 
       it "skips excluded exceptions" do
