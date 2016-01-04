@@ -1,5 +1,2 @@
 coverage
-pkg
-ruby/
-.bundle
 Gemfile.lock
