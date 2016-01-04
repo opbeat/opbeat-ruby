@@ -7,6 +7,10 @@ module Opbeat
             alias request_without_opb request
 
             def request req, body = nil, &block
+              unless Opbeat.started?
+                return request_without_opb req, body, &block
+              end
+
               host, port = req['host'] && req['host'].split(':')
               method = req.method
               path = req.path

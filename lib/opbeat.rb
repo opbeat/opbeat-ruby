@@ -39,4 +39,8 @@ module Opbeat
   def self.stop!
     Client.stop!
   end
+
+  def self.started?
+    !!Client.inst
+  end
 end
