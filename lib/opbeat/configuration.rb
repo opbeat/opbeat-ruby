@@ -12,7 +12,8 @@ module Opbeat
       use_ssl: true,
       current_user_method: :current_user,
       async: false,
-      filter_parameters: [/(authorization|password|passwd|secret)/i]
+      filter_parameters: [/(authorization|password|passwd|secret)/i],
+      transaction_post_interval: 60
     }.freeze
 
     attr_accessor :server
@@ -32,6 +33,7 @@ module Opbeat
     attr_accessor :environment
     attr_accessor :async
     attr_accessor :view_paths
+    attr_accessor :transaction_post_interval
 
     def initialize opts = {}
       DEFAULTS.merge(opts).each do |k, v|

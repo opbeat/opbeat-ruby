@@ -18,7 +18,7 @@ module Opbeat
       loop do
         info "Sending pending transactions: #{@queue.length}"
         send_transactions
-        sleep 10
+        sleep config.transaction_post_interval
       end
 
       at_exit do
