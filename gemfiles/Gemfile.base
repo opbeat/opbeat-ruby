@@ -1,0 +1,15 @@
+source "http://rubygems.org"
+
+gemspec path: File.expand_path('../..', __FILE__)
+
+gem 'rake'
+gem 'rspec'
+gem 'timecop'
+gem 'webmock'
+gem 'rack-test'
+
+# external libs
+
+gem 'sidekiq'
+gem 'delayed_job'
+
