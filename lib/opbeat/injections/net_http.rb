@@ -7,10 +7,25 @@ module Opbeat
             alias request_without_opb request
 
             def request req, body = nil, &block
-              signature = "HTTP/#{req.method}"
-              kind = "ext.net_http.#{req.method}"
+              host, port = req['host'] && req['host'].split(':')
+              method = req.method
+              path = req.path
+              scheme = use_ssl? ? 'https' : 'http'
 
-              Opbeat.trace signature, kind do
+              # inside a session
+              host ||= self.address
+              port ||= self.port
+
+              extra = {
+                scheme: scheme,
+                port: port,
+                path: path
+              }
+
+              signature = "#{method} #{host}"
+              kind = "ext.net_http.#{method}"
+
+              Opbeat.trace signature, kind, nil, extra do
                 request_without_opb(req, body, &block)
               end
             end

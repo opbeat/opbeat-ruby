@@ -24,7 +24,12 @@ module Opbeat
       expect(transaction.traces.length).to be 2
 
       http_trace = transaction.traces.last
-      expect(http_trace.signature).to eq 'HTTP/GET'
+      expect(http_trace.signature).to eq 'GET example.com'
+      expect(http_trace.extra).to eq({
+        scheme: 'http',
+        port: 80,
+        path: '/'
+      })
     end
 
   end
