@@ -24,7 +24,7 @@ module Opbeat
             timestamp: Integer,
             level: :error,
             logger: 'root',
-            culprit: nil,
+            culprit: "opbeat/data_builders/error_spec.rb:14:in `/'",
             machine: nil,
             extra: nil,
             param_message: nil,
