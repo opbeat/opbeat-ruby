@@ -22,10 +22,9 @@ module Opbeat
 
     def_delegators :client, :transaction, :trace, :report, :release
 
-    # Here for the delegator
     def client
       unless client = Client.inst
-        puts "Opbeat client wasn't started"
+        raise Error.new("Opbeat client wasn't started")
       end
 
       client
