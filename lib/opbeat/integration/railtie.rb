@@ -24,7 +24,7 @@ module Opbeat
         # :nocov:
       else
         Rails.logger.info "** [Opbeat] Client running"
-        app.config.middleware.insert 0, Middleware, config: config
+        app.config.middleware.insert 0, Middleware
       end
     end
 

@@ -1,8 +1,7 @@
 module Opbeat
   class Middleware
-    def initialize app, opts = {}
+    def initialize app
       @app = app
-      @opts = opts
     end
 
     def call env
