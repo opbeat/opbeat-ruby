@@ -100,12 +100,21 @@ module Opbeat
     end
 
     def trace *args, &block
-      current_transaction.trace(*args, &block)
+      unless transaction = current_transaction
+        return yield if block_given?
+        return
+      end
+
+      transaction.trace(*args, &block)
     end
 
     def enqueue transaction
       start_worker
-      # debug { Util::Inspector.new.transaction transaction }
+
+      if config.environment.to_sym == :development
+        debug { Util::Inspector.new.transaction transaction }
+      end
+
       @queue << transaction
     end
 

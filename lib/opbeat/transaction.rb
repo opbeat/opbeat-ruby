@@ -54,7 +54,7 @@ module Opbeat
 
       traces << trace
 
-      trace.start @start
+      trace.start
 
       begin
         yield

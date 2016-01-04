@@ -53,6 +53,13 @@ module Opbeat
           expect(subject.current_transaction).to have_received(:trace).with(1, 2, 3)
           subject.current_transaction = nil
         end
+
+        it "ignores when outside transaction" do
+          blk = Proc.new {}
+          allow(blk).to receive(:call)
+          subject.trace { blk.call }
+          expect(blk).to have_received(:call)
+        end
       end
 
       describe "#enqueue" do

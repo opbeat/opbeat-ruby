@@ -15,7 +15,7 @@ module Opbeat
     end
 
     def self.require_hooks
-      @registrations ||= {}
+      @require_hooks ||= {}
     end
 
     def self.installed
