@@ -98,6 +98,7 @@ module Opbeat
         yield transaction
       ensure
         transaction.done
+        transaction.release
       end
 
       transaction

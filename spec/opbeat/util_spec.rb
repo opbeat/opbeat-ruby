@@ -3,17 +3,29 @@ require 'spec_helper'
 module Opbeat
   RSpec.describe Util::Inspector, start: true, mock_time: true do
 
-    it "doesn't explode" do
-      transaction = Opbeat.transaction 'Test' do
+    let(:transaction) do
+      Opbeat.transaction 'Test' do
         travel 0.1
-        Opbeat.trace 'test' do
-          travel 0.1
-        end
+        Opbeat.trace('test 1') { travel 0.1 }
+        travel 0.1
+        Opbeat.trace('test 2') { travel 0.15 }
         travel 0.1
       end
-
-      expect { Util::Inspector.new.transaction(transaction) }.to_not raise_error
+    end
+    subject do
+      Util::Inspector.new.transaction(transaction)
     end
 
+    it "doesn't explode" do
+      expect { subject }.to_not raise_error
+    end
+
+    it "doesn't exceed it's length" do
+      expect(subject.split("\n").map(&:length).find { |l| l < 100 })
+    end
+
+    # it "is beautiful" do
+    #   puts subject
+    # end
   end
 end
