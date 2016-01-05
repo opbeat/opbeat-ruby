@@ -1,6 +1,7 @@
 require 'opbeat/data_builders'
 
 module Opbeat
+  # @api private
   class Worker
     include Logging
 

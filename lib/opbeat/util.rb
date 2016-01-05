@@ -1,4 +1,5 @@
 module Opbeat
+  # @api private
   module Util
     def self.nearest_minute
       now = Time.now

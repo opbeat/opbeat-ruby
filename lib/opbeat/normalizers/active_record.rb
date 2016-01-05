@@ -1,4 +1,4 @@
-require 'opbeat/sql_parser'
+require 'opbeat/sql_summarizer'
 
 module Opbeat
   module Normalizers
@@ -10,7 +10,7 @@ module Opbeat
           super(*args)
           adapter = ::ActiveRecord::Base.connection.adapter_name.downcase rescue nil
           @kind = "db.#{adapter || 'unknown'}.sql".freeze
-          @sql_parser = SqlParser.new config
+          @sql_parser = SqlSummarizer.new config
         end
 
         def normalize transaction, name, payload

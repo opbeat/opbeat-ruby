@@ -1,4 +1,5 @@
 module Opbeat
+  # @api private
   module Injections
     class Registration
       def initialize const_name, require_paths, injector
@@ -63,6 +64,7 @@ module Opbeat
   end
 end
 
+# @api private
 module ::Kernel
   alias require_without_op require
 

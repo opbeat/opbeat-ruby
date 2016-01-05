@@ -1,4 +1,5 @@
 module Opbeat
+  # @api private
   module Capistrano
     def self.load_into(configuration)
 

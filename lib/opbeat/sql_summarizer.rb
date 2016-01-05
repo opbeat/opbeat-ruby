@@ -1,5 +1,6 @@
 module Opbeat
-  class SqlParser
+  # @api private
+  class SqlSummarizer
     CACHE = {}
     TBL = "[^ ]+".freeze
     REGEXES = {

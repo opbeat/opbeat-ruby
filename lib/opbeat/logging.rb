@@ -1,4 +1,5 @@
 module Opbeat
+  # @api private
   module Logging
     PREFIX = "** [Opbeat] "
 

@@ -1,4 +1,5 @@
 module Opbeat
+  # @api private
   class LineCache
 
     CACHE = {}

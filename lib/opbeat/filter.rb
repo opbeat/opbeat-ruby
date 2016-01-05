@@ -1,4 +1,5 @@
 module Opbeat
+  # @api private
   class Filter
 
     MASK = '[FILTERED]'.freeze

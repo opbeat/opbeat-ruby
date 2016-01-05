@@ -1,3 +1,5 @@
+doc
 coverage
 Gemfile.lock
 opbeat*.gem
+.yardoc

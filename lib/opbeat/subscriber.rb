@@ -1,6 +1,7 @@
 require 'opbeat/normalizers'
 
 module Opbeat
+  # @api private
   class Subscriber
     include Logging
 

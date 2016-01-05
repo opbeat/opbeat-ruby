@@ -1,6 +1,6 @@
 require 'spec_helper'
 
 module Opbeat
-  RSpec.describe SqlParser do
+  RSpec.describe SqlSummarizer do
   end
 end

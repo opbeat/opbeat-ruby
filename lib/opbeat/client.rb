@@ -7,6 +7,7 @@ require 'opbeat/trace'
 require 'opbeat/error_message'
 
 module Opbeat
+  # @api private
   class Client
     include Logging
 
@@ -157,7 +158,7 @@ module Opbeat
       end
 
       begin
-        error_message = ErrorMessage.from_exception(config, exception)
+        error_message = ErrorMessage.from_exception(config, exception, opts)
         data = DataBuilders::Error.new(config).build error_message
         @http_client.post '/errors/', data
       rescue => e

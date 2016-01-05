@@ -1,4 +1,5 @@
 module Opbeat
+  # @api private
   module DataBuilders
     class DataBuilder
       def initialize config

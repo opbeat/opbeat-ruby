@@ -3,6 +3,7 @@ require 'net/http'
 require 'json'
 
 module Opbeat
+  # @api private
   class HttpClient
     include Logging
 
