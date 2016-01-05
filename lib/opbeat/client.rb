@@ -92,11 +92,15 @@ module Opbeat
       transaction = Transaction.new self, endpoint, kind, result
       self.current_transaction = transaction
 
-      if block_given?
+      return transaction unless block_given?
+
+      begin
         yield transaction
-      else
-        transaction
+      ensure
+        transaction.done
       end
+
+      transaction
     end
 
     def trace *args, &block

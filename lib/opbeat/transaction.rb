@@ -51,16 +51,18 @@ module Opbeat
 
     def trace signature, kind = nil, parents = nil, extra = {}, &block
       trace = Trace.new self, signature, kind, [@root.signature], extra
-
       traces << trace
-
       trace.start
+
+      return trace unless block_given?
 
       begin
         yield
       ensure
         trace.done
       end
+
+      trace
     end
 
   end

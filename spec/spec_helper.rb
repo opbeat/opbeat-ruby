@@ -1,4 +1,3 @@
-$:.unshift File.dirname(__FILE__) + "/lib"
 ENV['RACK_ENV'] = 'test'
 
 require 'bundler/setup'
@@ -46,16 +45,16 @@ end
 
 RSpec::Matchers.define :delegate do |method, to:|
   match do |delegator|
-  unless to.respond_to?(method)
-    raise NoMethodError.new("no method :#{method} on #{to}")
+    unless to.respond_to?(method)
+      raise NoMethodError.new("no method :#{method} on #{to}")
+    end
+
+    allow(to).to receive(method) { true }
+    delegator.send method
   end
 
-  allow(to).to receive(method) { true }
-  delegator.send method
-end
-
-description do
-  "delegate :#{method} to #{to}"
-end
+  description do
+    "delegate :#{method} to #{to}"
+  end
 end
 

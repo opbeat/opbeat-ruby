@@ -18,7 +18,10 @@ module Opbeat
             return :skip
           end
 
-          signature = signature_for(payload[:sql]) || payload[:name] || "SQL".freeze
+          signature =
+            signature_for(payload[:sql]) || # SELECT FROM "users"
+            payload[:name] ||               # Users load
+            "SQL".freeze
 
           [signature, @kind, { sql: payload[:sql] }]
         end

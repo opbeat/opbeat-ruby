@@ -53,7 +53,11 @@ module Opbeat
       end
     end
 
-    %w{action_controller active_record action_view}.each do |f|
+    %w{
+      action_controller
+      active_record
+      action_view
+    }.each do |f|
       require "opbeat/normalizers/#{f}"
     end
   end

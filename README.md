@@ -28,26 +28,23 @@ Rails.application.configure do
 end
 ```
 
-### Rails 2
-
-No support for Rails 2.
-
 ### Rack
-
-Basic RackUp file.
 
 ```ruby
 require 'opbeat'
 
+# set up an Opbeat configuration
 config = Opbeat::Configuration.new do |conf|
   conf.organization_id = 'XXX'
   conf.app_id = 'XXX'
   conf.secret_token = 'XXX'
 end
 
+# start the Opbeat client
 Opbeat.start! config
 
-use Opbeat::Middleware 
+# install the Opbeat middleware
+use Opbeat::Middleware
 
 ```
 

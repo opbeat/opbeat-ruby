@@ -10,6 +10,7 @@ module Opbeat
       DEFAULTS = {
         width: 100
       }.freeze
+
       NEWLINE = "\n".freeze
       SPACE = " ".freeze
 
@@ -35,18 +36,18 @@ module Opbeat
           desc_lengths = descriptions.map { |d| w - d.length }
           desc_indent = [0, ([indent] + desc_lengths).min].max
 
-          span = (trace.duration * f).to_i
+          span = (trace.duration || 0 * f).to_i
           descriptions.map do |desc|
             "#{SPACE * desc_indent}#{desc}"
           end + ["#{" " * indent}+#{"-" * [(span - 2), 0].max}+"]
         end.join(NEWLINE)
 
-        <<-STR
-#{"=" * (w.to_i - Logging::PREFIX.length)}
-#{transaction.endpoint} - #{transaction.kind} - #{transaction.duration}ms
-+#{"-" * (w.to_i - 2)}+
-#{traces}
-STR
+        <<-STR.gsub(/^ {10}/, '')
+          \n#{"=" * (w.to_i)}
+          #{transaction.endpoint} - kind:#{transaction.kind} - #{transaction.duration}ms
+          +#{"-" * (w.to_i - 2)}+
+          #{traces}
+        STR
       end
 
     end

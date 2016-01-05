@@ -1,6 +1,6 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+$:.unshift(lib) unless $:.include?(lib)
 require 'opbeat/version'
 
 Gem::Specification.new do |gem|
@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email            = "support@opbeat.com"
   gem.summary          = "The official Opbeat Ruby client library"
   gem.homepage         = "https://github.com/opbeat/opbeat-ruby"
-  gem.license          = "BSD-3"
+  gem.license          = "BSD-3-Clause"
 
   gem.files            = `git ls-files -z`.split("\x0")
   gem.require_paths    = ["lib"]

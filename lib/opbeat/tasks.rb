@@ -17,5 +17,4 @@ namespace :opbeat do
       exit 1 # release returned nil
     end
   end
-  task :deployment => :release
 end
