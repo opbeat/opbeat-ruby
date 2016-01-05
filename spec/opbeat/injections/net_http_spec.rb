@@ -16,6 +16,7 @@ module Opbeat
       WebMock.stub_request :get, 'http://example.com:80'
 
       transaction = Opbeat.transaction 'Test'
+
       Net::HTTP.start('example.com') do |http|
         http.get '/'
       end

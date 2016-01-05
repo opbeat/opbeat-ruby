@@ -95,13 +95,13 @@ module Opbeat
       return transaction unless block_given?
 
       begin
-        yield transaction
+        result = yield transaction
       ensure
         transaction.done
         transaction.release
       end
 
-      transaction
+      result
     end
 
     def trace *args, &block

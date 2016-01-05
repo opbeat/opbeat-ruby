@@ -4,12 +4,14 @@ module Opbeat
   RSpec.describe Util::Inspector, start: true, mock_time: true do
 
     let(:transaction) do
-      Opbeat.transaction 'Test' do
+      Opbeat.transaction 'Test' do |transaction|
         travel 0.1
         Opbeat.trace('test 1') { travel 0.1 }
         travel 0.1
         Opbeat.trace('test 2') { travel 0.15 }
         travel 0.1
+
+        transaction
       end
     end
     subject do

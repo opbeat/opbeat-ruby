@@ -57,12 +57,12 @@ module Opbeat
       return trace unless block_given?
 
       begin
-        yield
+        result = yield trace
       ensure
         trace.done
       end
 
-      trace
+      result
     end
 
   end
