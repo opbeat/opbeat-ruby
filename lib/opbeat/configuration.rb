@@ -4,7 +4,7 @@ module Opbeat
       server: "https://intake.opbeat.com",
       context_lines: 3,
       enabled_environments: %w{development production},
-      environment: ENV['RACK_ENV'] || ENV['RAILS_ENV'],
+      environment: ENV['RACK_ENV'] || ENV['RAILS_ENV'] || :default,
       excluded_exceptions: [],
       timeout: 100,
       open_timeout: 100,
