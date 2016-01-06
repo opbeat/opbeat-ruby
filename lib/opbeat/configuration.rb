@@ -3,7 +3,7 @@ module Opbeat
     DEFAULTS = {
       server: "https://intake.opbeat.com",
       context_lines: 3,
-      enabled_environments: %w{development production},
+      enabled_environments: %w{production},
       environment: ENV['RACK_ENV'] || ENV['RAILS_ENV'] || :default,
       excluded_exceptions: [],
       timeout: 100,

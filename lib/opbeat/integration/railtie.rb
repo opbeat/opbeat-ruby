@@ -9,22 +9,19 @@ module Opbeat
 
     initializer "opbeat.configure" do |app|
       config = Configuration.new app.config.opbeat do |conf|
-        # Rails specifics
         conf.logger = Rails.logger
         conf.view_paths = app.config.paths['app/views'].existent
       end
 
-      if !config.enabled_environments.include?(Rails.env)
-        # :nocov:
-        Rails.logger.info "** [Opbeat] Not running in #{Rails.env} mode"
-        # :nocov:
-      elsif !Opbeat.start!(config)
-        # :nocov:
-        Rails.logger.info "** [Opbeat] Failed to start"
-        # :nocov:
+      if config.enabled_environments.include?(Rails.env)
+        if Opbeat.start!(config)
+          app.config.middleware.insert 0, Middleware
+          Rails.logger.info "** [Opbeat] Client running"
+        else
+          Rails.logger.info "** [Opbeat] Failed to start"
+        end
       else
-        Rails.logger.info "** [Opbeat] Client running"
-        app.config.middleware.insert 0, Middleware
+        Rails.logger.info "** [Opbeat] Not running in #{Rails.env} mode"
       end
     end
 
