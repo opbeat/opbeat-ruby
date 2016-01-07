@@ -50,20 +50,19 @@ describe 'Rails integration' do
 
   before :each do
     Opbeat::Client.inst.queue.clear
+    Opbeat::Client.inst.instance_variable_set :@pending_transactions, []
   end
 
   it "adds an exception handler and handles exceptions" do
     get '/404'
 
-    expect(WebMock).to have_requested(:post, %r{/errors/$}).with({
-      body: %r{ActionController::RoutingError.*404}
-    })
+    expect(Opbeat::Client.inst.queue.length).to be 1
   end
 
   it "traces actions and enqueues transaction" do
     get '/users'
 
-    expect(Opbeat::Client.inst.queue.length).to be 1
+    expect(Opbeat::Client.inst.pending_transactions.length).to be 1
   end
 
   it "logs when failing to report error" do

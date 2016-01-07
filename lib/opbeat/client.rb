@@ -5,6 +5,7 @@ require 'opbeat/worker'
 require 'opbeat/transaction'
 require 'opbeat/trace'
 require 'opbeat/error_message'
+require 'opbeat/data_builders'
 
 module Opbeat
   # @api private
@@ -41,8 +42,7 @@ module Opbeat
     def self.stop!
       LOCK.synchronize do
         return unless @instance
-        @instance.kill_worker
-        @instance.unregister!
+        @instance.stop!
         @instance = nil
       end
     end
@@ -55,12 +55,14 @@ module Opbeat
       @config = config
       @subscriber = Subscriber.new config, self
       @transaction_info = TransactionInfo.new
-      @http_client = HttpClient.new config
 
       @queue = Queue.new
+
+      @pending_transactions = []
+      @last_sent_transactions = Time.now
     end
 
-    attr_reader :config, :queue
+    attr_reader :config, :queue, :pending_transactions
 
     def start!
       info "Starting client"
@@ -70,8 +72,9 @@ module Opbeat
       self
     end
 
-    def unregister!
-      @subscriber.unregister!
+    def stop!
+      kill_worker
+      unregister!
     end
 
     # metrics
@@ -114,38 +117,14 @@ module Opbeat
       transaction.trace(*args, &block)
     end
 
-    def enqueue transaction
+    def submit_transaction transaction
       ensure_worker_running
 
-      if config.environment == 'development'.freeze
-        debug { Util::Inspector.new.transaction transaction }
+      @pending_transactions << transaction
+
+      if should_send_transactions?
+        flush_transactions
       end
-
-      @queue << transaction
-    end
-
-    def start_worker
-      return if worker_running?
-
-      info "Starting worker in thread"
-
-      @worker_thread = Thread.new do
-        begin
-          Worker.new(config, @queue, @http_client).run
-        rescue => e
-          fatal "Failed booting worker:\n#{e.inspect}"
-          debug e.backtrace.join("\n")
-          raise
-        ensure
-          config.logger.flush
-        end
-      end
-    end
-
-    def kill_worker
-      return unless worker_running?
-      @worker_thread.kill
-      @worker_thread = nil
     end
 
     # errors
@@ -157,14 +136,9 @@ module Opbeat
         exception.set_backtrace caller
       end
 
-      begin
-        error_message = ErrorMessage.from_exception(config, exception, opts)
-        data = DataBuilders::Error.new(config).build error_message
-        @http_client.post '/errors/', data
-      rescue => e
-        fatal "Failed to report error: #{e.inspect}"
-        debug "error_message:#{error_message}"
-      end
+      error_message = ErrorMessage.from_exception(config, exception, opts)
+      data = DataBuilders::Error.new(config).build error_message
+      enqueue Worker::PostRequest.new('/errors/', data)
     end
 
     def capture
@@ -191,10 +165,39 @@ module Opbeat
 
     def release rel
       info "Sending release #{rel[:rev]}"
-      @http_client.post '/releases/', rel
+      enqueue Worker::PostRequest.new('/releases/', rel)
     end
 
     private
+
+    def enqueue request
+      ensure_worker_running
+      @queue << request
+    end
+
+    def start_worker
+      return if worker_running?
+
+      info "Starting worker in thread"
+
+      @worker_thread = Thread.new do
+        begin
+          Worker.new(config, @queue).run
+        rescue => e
+          fatal "Failed booting worker:\n#{e.inspect}"
+          debug e.backtrace.join("\n")
+          raise
+        ensure
+          config.logger.flush
+        end
+      end
+    end
+
+    def kill_worker
+      return unless worker_running?
+      @worker_thread.kill
+      @worker_thread = nil
+    end
 
     def ensure_worker_running
       return if worker_running?
@@ -207,6 +210,22 @@ module Opbeat
 
     def worker_running?
       @worker_thread && @worker_thread.alive?
+    end
+
+    def unregister!
+      @subscriber.unregister!
+    end
+
+    def should_send_transactions?
+      Time.now - @last_sent_transactions > config.transaction_post_interval
+    end
+
+    def flush_transactions
+      path = '/transactions/'
+      data = DataBuilders::Transactions.new(config).build(@pending_transactions)
+      enqueue Worker::PostRequest.new(path, data)
+      @last_sent_transactions = Time.now
+      @pending_transactions = []
     end
 
   end

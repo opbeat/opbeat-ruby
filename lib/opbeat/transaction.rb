@@ -49,7 +49,7 @@ module Opbeat
 
       release
 
-      @client.enqueue self
+      @client.submit_transaction self
     end
 
     def trace signature, kind = nil, parents = nil, extra = {}, &block

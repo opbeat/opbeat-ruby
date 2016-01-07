@@ -3,33 +3,33 @@ require 'spec_helper'
 module Opbeat
   RSpec.describe Worker do
 
-    let(:queue) { Queue.new }
-    let(:config) { Configuration.new }
 
-    subject do
-      Worker.new config, queue, HttpClient.new(config)
+    let :worker do
+      config = Configuration.new
+      @queue = Queue.new
+      Worker.new config, @queue, HttpClient.new(config)
     end
 
     describe "#run" do
-      it "loops and sleeps" do
-        expect(subject).to receive(:loop).and_yield
-        expect(subject).to receive(:send_transactions)
-        expect(subject).to receive(:sleep)
-        subject.run
-      end
-    end
+      context "during a loop" do
+        before { allow(worker).to receive(:loop).and_yield }
 
-    describe "#send_transactions" do
-      it "turns all the transaction in the queue into a combined req" do
-        transaction = Transaction.new(nil, 'Test').done(200)
-        queue << transaction
+        subject { Thread.new { worker.run }.join 0.01 }
 
-        subject.send_transactions
+        it "does nothing with an empty queue" do
+          subject
+          expect(WebMock).to_not have_requested(:any, /.*/)
+        end
 
-        expect(queue).to be_empty
-        expect(WebMock).to have_requested(:post, %r{/transactions/$}).with({
-          body: DataBuilders::Transactions.new(config).build([transaction])
-        })
+        it "pops the queue" do
+          @queue << Worker::PostRequest.new('/errors/', {id: 1}.to_json)
+          @queue << Worker::PostRequest.new('/errors/', {id: 2}.to_json)
+
+          subject
+
+          expect(WebMock).to have_requested(:post, %r{/errors/$}).with(body: {id: 1})
+          expect(WebMock).to have_requested(:post, %r{/errors/$}).with(body: {id: 2})
+        end
       end
     end
 

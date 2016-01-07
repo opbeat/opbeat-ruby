@@ -37,7 +37,7 @@ module Opbeat
 
     describe "#submit" do
       it "ends transaction and submits it to the client" do
-        client = double('client', enqueue: true, :current_transaction= => true)
+        client = double('client', submit_transaction: true, :current_transaction= => true)
         transaction = Transaction.new client, 'Test'
 
         travel 0.1
@@ -46,7 +46,7 @@ module Opbeat
         expect(transaction.result).to be 200
         expect(transaction).to be_done
         expect(client).to have_received(:current_transaction=)
-        expect(client).to have_received(:enqueue).with transaction
+        expect(client).to have_received(:submit_transaction).with transaction
       end
     end
 

@@ -62,10 +62,24 @@ module Opbeat
         end
       end
 
-      describe "#enqueue" do
-        it "adds to the queue" do
-          subject.enqueue Transaction.new(subject, 'Test').done(200)
+      describe "#submit_transaction" do
+        it "doesn't send right away" do
+          transaction = Transaction.new('Test', 'test')
+
+          subject.submit_transaction transaction
+
+          expect(subject.queue.length).to be 0
+          expect(WebMock).to_not have_requested(:post, %r{/transactions/$})
+        end
+
+        it "sends if it's long enough ago that we sent last" do
+          transaction = Transaction.new('Test', 'test')
+          subject.instance_variable_set :@last_sent_transactions, Time.now - 61
+
+          subject.submit_transaction transaction
+
           expect(subject.queue.length).to be 1
+          expect(subject.queue.pop).to be_a Worker::PostRequest
         end
       end
 
@@ -75,9 +89,8 @@ module Opbeat
 
           subject.report exception
 
-          expect(WebMock).to have_requested(:post, %r{/errors/$}).with({
-            body: /{"message":"Exception: BOOM/
-          })
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop).to be_a Worker::PostRequest
         end
 
         it "skips nil exceptions" do
@@ -96,9 +109,8 @@ module Opbeat
             end
           end.to raise_exception(Exception)
 
-          expect(WebMock).to have_requested(:post, %r{/errors/$}).with({
-            body: /{"message":"Exception: BOOM"/
-          })
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop).to be_a Worker::PostRequest
         end
       end
 
@@ -108,9 +120,8 @@ module Opbeat
 
           subject.release release
 
-          expect(WebMock).to have_requested(:post, %r{/releases/$}).with({
-            body: '{"rev":"abc123","status":"completed"}'
-          })
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop).to be_a Worker::PostRequest
         end
       end
 
