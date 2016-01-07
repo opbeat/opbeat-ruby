@@ -48,6 +48,45 @@ use Opbeat::Middleware
 
 ```
 
+## Configuration
+
+Opbeat works with just the authentication configuration but of course there are other knobs to turn. For a complete list, see [configuration.rb](https://github.com/opbeat/opbeat-ruby/blob/master/lib/opbeat/configuration.rb).
+
+### Ignore specific exceptions
+
+```ruby
+config.opbeat.excluded_exceptions += %w{
+  ActiveRecord::RecordNotFound
+  ActionController::RoutingError
+}
+```
+
+### Enable in development and other environments
+
+As a default Opbeat only runs in production. You can make it run in other environments by adding them to the `enabled_environments` whitelist.
+
+```ruby
+config.opbeat.enabled_environments += %w{development}
+```
+
+### Sanitizing data
+
+Opbeat can strip certain data points from the reports it sends like passwords or other sensitive information. If you're on Rails the list will automatically include what you have in `config.filter_parameters`.
+
+Add or modify the list using the `filter_parameters` configuration:
+
+```ruby
+config.opbeat.filter_parameters += [/regex(p)?/, "string", :symbol]
+```
+
+### User information
+
+Opbeat can automatically add user information to errors. By default it looks for at method called `current_user` on the current controller. To change the method use `current_user_method`.
+
+```
+config.opbeat.current_user_method = :current_employee
+```
+
 ## Background processing
 
 Opbeat automatically catches exceptions in [delayed_job](https://github.com/collectiveidea/delayed_job) or [sidekiq](http://sidekiq.org/).
