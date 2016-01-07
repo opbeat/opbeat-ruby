@@ -15,7 +15,7 @@ module Opbeat
       end
     end
     subject do
-      Util::Inspector.new.transaction(transaction)
+      Util::Inspector.new.transaction(transaction, include_parents: true)
     end
 
     it "doesn't explode" do

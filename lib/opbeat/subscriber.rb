@@ -68,7 +68,13 @@ module Opbeat
     private
 
     def parents_for transaction
-      transaction.notifications.select(&:trace).map { |n| n.trace.signature }
+      traces = transaction.notifications.select(&:trace)
+
+      if traces.any?
+        traces.map { |n| n.trace.signature }
+      else
+        [transaction.root_trace.signature]
+      end
     end
 
     def actions_regex
