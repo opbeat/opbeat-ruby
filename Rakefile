@@ -10,3 +10,16 @@ task :default => :spec
 
 require 'yard'
 YARD::Rake::YardocTask.new
+
+task :mem_profile do
+  require 'memory_profiler'
+  $:.unshift Dir.pwd + '/lib'
+
+  filename = "profile-#{Time.now.to_i}.txt"
+
+  MemoryProfiler.report(allow_files: /opbeat/i) do
+    require 'opbeat'
+  end.pretty_print(to_file: filename)
+
+  filename
+end
