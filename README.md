@@ -5,7 +5,7 @@
 Add the following to your `Gemfile`:
 
 ```ruby
-gem "opbeat", "~> 3.0"
+gem 'opbeat', git: 'https://github.com/opbeat/opbeat-ruby'
 ```
 
 The Opbeat gem adhere to [Semantic
