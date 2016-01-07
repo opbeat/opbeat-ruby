@@ -36,6 +36,10 @@ module Opbeat
       @body, @block, @closed = body, block, false
     end
 
+    def respond_to? *args
+      super || @body.respond_to?(*args)
+    end
+
     def close
       return if closed?
 
@@ -52,12 +56,8 @@ module Opbeat
       @closed
     end
 
-    def respond_to? method
-      @body.respond_to? method
-    end
-
-    def method_missing method, *args, &block
-      @body.send(method, *args, &block)
+    def method_missing *args, &block
+      @body.__send__(*args, &block)
     end
   end
 end
