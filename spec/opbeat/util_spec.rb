@@ -26,8 +26,9 @@ module Opbeat
       expect(subject.split("\n").map(&:length).find { |l| l < 100 })
     end
 
-    it "is beautiful" do
-      puts subject
-    end
+    # preview
+    # it "is beautiful" do
+    #   puts subject
+    # end
   end
 end

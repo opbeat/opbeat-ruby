@@ -31,7 +31,7 @@ module Opbeat
         travel 0.1
         trace.done
 
-        expect(trace.duration).to eq 100.0
+        expect(trace.duration.round 4).to eq 100.0
         expect(trace).to be_done
       end
     end

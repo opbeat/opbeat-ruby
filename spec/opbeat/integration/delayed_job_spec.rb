@@ -29,7 +29,8 @@ if defined?(Delayed)
       MyJob.new.delay.blow_up exception
 
       expect(Delayed::Worker.new.work_off).to eq [0, 1]
-      expect(Opbeat::Client.inst.queue.length).to be 1
+      # expect(Opbeat::Client.inst.queue.length).to be 1
+      expect(WebMock).to have_requested(:post, %r{/errors/$})
     end
   end
 end

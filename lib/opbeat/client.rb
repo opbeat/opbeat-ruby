@@ -121,7 +121,7 @@ module Opbeat
       ensure_worker_running
 
       if config.environment == 'development'
-        debug { Util::Inspector.new.transaction transaction }
+        debug { Util::Inspector.new.transaction transaction, include_parents: true }
       end
 
       @pending_transactions << transaction
