@@ -10,7 +10,8 @@ describe 'Rails integration' do
   def boot
     TinderButForHotDogs.initialize!
     TinderButForHotDogs.routes.draw do
-      resources :users
+      get 'error', to: 'users#error'
+      root to: 'users#index'
     end
   end
 
@@ -31,6 +32,10 @@ describe 'Rails integration' do
     class UsersController < ActionController::Base
       def index
         render text: 'HOT DOGS!'
+      end
+
+      def error
+        raise Exception.new("NO KETCHUP!")
       end
     end
 
@@ -54,13 +59,13 @@ describe 'Rails integration' do
   end
 
   it "adds an exception handler and handles exceptions" do
-    get '/404'
+    get '/error'
 
-    expect(Opbeat::Client.inst.queue.length).to be 1
+    expect(WebMock).to have_requested(:post, %r{/errors/$})
   end
 
   it "traces actions and enqueues transaction" do
-    get '/users'
+    get '/'
 
     expect(Opbeat::Client.inst.pending_transactions.length).to be 1
   end

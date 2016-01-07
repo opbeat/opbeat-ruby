@@ -13,7 +13,7 @@ module Opbeat
       }.freeze
 
       NEWLINE = "\n".freeze
-      SPACE = " ".freeze
+      SPACE = " ".freeze
 
       def initialize config = {}
         @config = DEFAULTS.merge(config)
@@ -27,8 +27,10 @@ module Opbeat
           trace.relative_start
         end
 
+        traces.shift # root
+
         traces = traces.map do |trace|
-          descriptions = [trace.signature || ""]
+          descriptions = ["#{trace.signature} - #{trace.kind}"]
 
           if include_parents
             parents_sig = trace.parents.join(' ')
@@ -37,14 +39,18 @@ module Opbeat
 
           indent = (trace.relative_start * f).to_i
 
-          desc_lengths = descriptions.map { |d| w - d.length }
-          desc_indent = [0, ([indent] + desc_lengths).min].max
+          longest_desc = descriptions.map(&:length).max
+          desc_indent = [indent, w - longest_desc].min
 
           span = (trace.duration * f).to_i
 
-          descriptions.map do |desc|
+          lines = descriptions.map do |desc|
             "#{SPACE * desc_indent}#{desc}"
-          end + ["#{" " * indent}+#{"-" * [(span - 2), 0].max}+"]
+          end
+
+          lines << "#{SPACE * indent}+#{"-" * [(span - 2), 0].max}+"
+
+          lines
         end.join(NEWLINE)
 
         <<-STR.gsub(/^\s{10}/, '')

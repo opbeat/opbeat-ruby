@@ -7,7 +7,7 @@ module Opbeat
     let :worker do
       config = Configuration.new
       @queue = Queue.new
-      Worker.new config, @queue, HttpClient.new(config)
+      Worker.new config, @queue
     end
 
     describe "#run" do

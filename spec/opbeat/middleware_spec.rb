@@ -8,7 +8,8 @@ module Opbeat
       app = Middleware.new(lambda do |env|
         [200, {}, ['']]
       end)
-      status, _, _ = app.call({})
+      status, _, body = app.call({})
+      body.close
 
       expect(status).to eq 200
       expect(Opbeat::Client.inst.pending_transactions.length).to be 1

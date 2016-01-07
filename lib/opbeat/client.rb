@@ -120,6 +120,10 @@ module Opbeat
     def submit_transaction transaction
       ensure_worker_running
 
+      if config.environment == 'development'
+        debug { Util::Inspector.new.transaction transaction }
+      end
+
       @pending_transactions << transaction
 
       if should_send_transactions?

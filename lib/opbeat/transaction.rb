@@ -3,10 +3,7 @@ require 'opbeat/util'
 module Opbeat
   class Transaction
 
-    DEFAULT_KIND = 'code.custom'.freeze
-    DEFAULT_ROOT_SIGNATURE = 'transaction'.freeze
-
-    def initialize client, endpoint, kind = DEFAULT_KIND, result = nil
+    def initialize client, endpoint, kind = 'code.custom', result = nil
       @client = client
       @endpoint = endpoint
       @kind = kind
@@ -15,7 +12,7 @@ module Opbeat
       @timestamp = Util.nearest_minute.to_i
       @start = Time.now.to_f
 
-      @root = Trace.new(self, endpoint, DEFAULT_ROOT_SIGNATURE, nil).start(@start)
+      @root = Trace.new(self, endpoint, 'transaction', nil).start(@start)
       @traces = [@root]
       @notifications = []
     end
