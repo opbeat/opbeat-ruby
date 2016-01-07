@@ -43,14 +43,19 @@ RSpec.configure do |config|
   end
 end
 
-RSpec::Matchers.define :delegate do |method, to:|
+RSpec::Matchers.define :delegate do |method, to:, args:nil|
   match do |delegator|
     unless to.respond_to?(method)
       raise NoMethodError.new("no method :#{method} on #{to}")
     end
 
-    allow(to).to receive(method) { true }
-    delegator.send method
+    if args
+      allow(to).to receive(method).with(*args) { true }
+    else
+      allow(to).to receive(method).with(no_args) { true }
+    end
+
+    delegator.send method, *args
   end
 
   description do

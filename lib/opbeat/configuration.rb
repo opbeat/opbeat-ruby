@@ -1,25 +1,28 @@
+require 'logger'
+
 module Opbeat
   class Configuration
     DEFAULTS = {
       server: "https://intake.opbeat.com",
+      logger: Logger.new(nil),
       context_lines: 3,
       enabled_environments: %w{production},
-      environment: ENV['RACK_ENV'] || ENV['RAILS_ENV'] || :default,
       excluded_exceptions: [],
+      filter_parameters: [/(authorization|password|passwd|secret)/i],
       timeout: 100,
       open_timeout: 100,
       backoff_multiplier: 2,
       use_ssl: true,
       current_user_method: :current_user,
-      async: false,
-      filter_parameters: [/(authorization|password|passwd|secret)/i],
+      environment: ENV['RACK_ENV'] || ENV['RAILS_ENV'] || :default,
       transaction_post_interval: 60
     }.freeze
 
-    attr_accessor :server
     attr_accessor :secret_token
     attr_accessor :organization_id
     attr_accessor :app_id
+
+    attr_accessor :server
     attr_accessor :logger
     attr_accessor :context_lines
     attr_accessor :enabled_environments
@@ -31,9 +34,9 @@ module Opbeat
     attr_accessor :use_ssl
     attr_accessor :current_user_method
     attr_accessor :environment
-    attr_accessor :async
-    attr_accessor :view_paths
     attr_accessor :transaction_post_interval
+
+    attr_accessor :view_paths
 
     def initialize opts = {}
       DEFAULTS.merge(opts).each do |k, v|
