@@ -1,4 +1,6 @@
-# ![Opbeat](http://s3.brnbw.com/opbeat_logo.png)
+<h1>
+  <img src='http://opbeat-brand-assets.s3-website-us-east-1.amazonaws.com/svg/logo/logo.svg' width=80% alt='Opbeat' />
+</h1>
 
 ## Installation
 
