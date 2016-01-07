@@ -1,7 +1,7 @@
 module Opbeat
   # @api private
   module Logging
-    PREFIX = "** [Opbeat] "
+    PREFIX = "** [Opbeat] ".freeze
 
     def debug *args, &block
       config.logger.debug(log_message(*args, &block)) if has_logger?

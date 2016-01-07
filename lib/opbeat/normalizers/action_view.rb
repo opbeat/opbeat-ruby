@@ -30,7 +30,7 @@ module Opbeat
           return "Absolute path".freeze unless root
 
           start = root.length
-          start += 1 if path[root.length] == "/"
+          start += 1 if path[root.length] == "/".freeze
 
           if type == :gem
             "$GEM_PATH/#{path[start, path.length]}"

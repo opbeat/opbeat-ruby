@@ -7,7 +7,7 @@ module Opbeat
   class HttpClient
     include Logging
 
-    USER_AGENT = "opbeat-ruby/#{Opbeat::VERSION}"
+    USER_AGENT = "opbeat-ruby/#{Opbeat::VERSION}".freeze
 
     attr_reader :state
     attr_reader :adapter
@@ -35,7 +35,7 @@ module Opbeat
 
       request = adapter.post path do |req|
         req['Authorization'] = auth_header
-        req['Content-Type'] = 'application/json'
+        req['Content-Type'] = 'application/json'.freeze
         req['Content-Length'] = body.bytesize.to_s
         req['User-Agent'] = USER_AGENT
         req.body = body
@@ -43,9 +43,6 @@ module Opbeat
 
       begin
         response = adapter.perform_request request
-
-        debug "=> #{response.code}"
-
         unless response.code.to_i.between?(200, 299)
           raise Error.new("Error from Opbeat server (#{response.code}): #{response.body}")
         end

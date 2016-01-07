@@ -1,4 +1,4 @@
-# Opbeat
+# ![Opbeat](http://s3.brnbw.com/opbeat_logo.png)
 
 ## Installation
 
@@ -107,6 +107,10 @@ Resque::Failure.backend = Resque::Failure::Multiple
 $ bundle install
 $ rspec spec
 ```
+
+## Legacy
+
+Be aware that 3.0 is a almost complete rewrite of the Opbeat ruby client. It is not api compliant with version 2 and below.
 
 ## Resources
 

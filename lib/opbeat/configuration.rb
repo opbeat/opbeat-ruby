@@ -3,7 +3,7 @@ require 'logger'
 module Opbeat
   class Configuration
     DEFAULTS = {
-      server: "https://intake.opbeat.com",
+      server: "https://intake.opbeat.com".freeze,
       logger: Logger.new(nil),
       context_lines: 3,
       enabled_environments: %w{production},
@@ -14,7 +14,7 @@ module Opbeat
       backoff_multiplier: 2,
       use_ssl: true,
       current_user_method: :current_user,
-      environment: ENV['RACK_ENV'] || ENV['RAILS_ENV'] || :default,
+      environment: ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'default',
       transaction_post_interval: 60
     }.freeze
 
@@ -46,6 +46,10 @@ module Opbeat
       if block_given?
         yield self
       end
+    end
+
+    def validate
+      # TODO
     end
   end
 end

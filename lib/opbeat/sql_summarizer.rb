@@ -4,11 +4,11 @@ module Opbeat
     CACHE = {}
     TBL = "[^ ]+".freeze
     REGEXES = {
-      /^SELECT .* FROM (#{TBL})/i => lambda { |m| "SELECT FROM #{m[1]}" },
-      /^INSERT INTO (#{TBL})/i => lambda { |m| "INSERT INTO #{m[1]}" },
-      /^UPDATE (#{TBL})/i => lambda { |m| "UPDATE #{m[1]}" },
-      /^DELETE FROM (#{TBL})/i => lambda { |m| "DELETE FROM #{m[1]}" }
-    }
+      /^SELECT .* FROM (#{TBL})/i => "SELECT FROM ".freeze,
+      /^INSERT INTO (#{TBL})/i => "INSERT INTO ".freeze,
+      /^UPDATE (#{TBL})/i => "UPDATE ".freeze,
+      /^DELETE FROM (#{TBL})/i => "DELETE FROM ".freeze
+    }.freeze
 
     def initialize config
       @config = config
@@ -19,7 +19,7 @@ module Opbeat
 
       REGEXES.find do |regex, sig|
         if match = sql.match(regex)
-          break sig.call(match)
+          break sig + match[1]
         end
       end
     end

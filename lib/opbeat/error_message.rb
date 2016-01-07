@@ -10,7 +10,7 @@ module Opbeat
 
     DEFAULTS = {
       level: :error,
-      logger: 'root'
+      logger: 'root'.freeze
     }.freeze
 
     def initialize config, message, attrs = {}

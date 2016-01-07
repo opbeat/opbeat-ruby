@@ -3,7 +3,7 @@ require 'opbeat/util'
 module Opbeat
   class Trace
 
-    def initialize transaction, signature, kind = 'code.custom', parents = nil, extra = {}
+    def initialize transaction, signature, kind = 'code.custom'.freeze, parents = nil, extra = {}
       @transaction = transaction
       @signature = signature
       @kind = kind

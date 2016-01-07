@@ -3,29 +3,35 @@ module Opbeat
     class HTTP < Struct.new(:url, :method, :data, :query_string, :cookies,
                             :headers, :remote_host, :http_host, :user_agent,
                             :secure, :env)
+
+      HTTP_ENV_KEY = /^HTTP_/.freeze
+      UNDERSCORE = "_".freeze
+      DASH = "-".freeze
+      QUESTION = "?".freeze
+
       def self.from_rack_env env, filter: nil
         req = Rack::Request.new env
 
         http = new(
-          req.url.split('?').first,             # url
-          req.request_method,                   # method
-          nil,                                  # data
-          req.query_string,                     # query string
-          env['HTTP_COOKIE'],                   # cookies
-          {},                                   # headers
-          req.ip,                               # remote host
-          req.host_with_port,                   # http host
-          req.user_agent,                       # user agent
-          req.scheme == 'https' ? true : false, # secure
-          {}                                    # env
+          req.url.split(QUESTION).first,               # url
+          req.request_method,                          # method
+          nil,                                         # data
+          req.query_string,                            # query string
+          env['HTTP_COOKIE'],                          # cookies
+          {},                                          # headers
+          req.ip,                                      # remote host
+          req.host_with_port,                          # http host
+          req.user_agent,                              # user agent
+          req.scheme == 'https'.freeze ? true : false, # secure
+          {}                                           # env
         )
 
         env.each do |k, v|
           next unless k.upcase == k # lower case stuff isn't relevant
 
-          if k.match(/^HTTP_/)
-            header = k.gsub(/^HTTP_/, '')
-              .split("_").map(&:capitalize).join('-')
+          if k.match(HTTP_ENV_KEY)
+            header = k.gsub(HTTP_ENV_KEY, '')
+              .split(UNDERSCORE).map(&:capitalize).join(DASH)
             http.headers[header] = v.to_s
           else
             http.env[k] = v.to_s

@@ -72,7 +72,9 @@ module Opbeat
     end
 
     def actions_regex
-      @actions_regex ||= Regexp.new("(" + @normalizers.keys.join("|") + ")")
+      @actions_regex ||= Regexp.new(
+        "(".freeze + @normalizers.keys.join("|".freeze) + ")".freeze
+      )
     end
 
   end

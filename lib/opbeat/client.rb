@@ -115,9 +115,9 @@ module Opbeat
     end
 
     def enqueue transaction
-      start_worker
+      ensure_worker_running
 
-      if config.environment.to_sym == :development
+      if config.environment == 'development'.freeze
         debug { Util::Inspector.new.transaction transaction }
       end
 
@@ -127,7 +127,7 @@ module Opbeat
     def start_worker
       return if worker_running?
 
-      info { "Starting worker in thread".freeze }
+      info "Starting worker in thread"
 
       @worker_thread = Thread.new do
         begin

@@ -21,7 +21,7 @@ module Opbeat
           Rails.logger.info "** [Opbeat] Failed to start"
         end
       else
-        Rails.logger.info "** [Opbeat] Not running in #{Rails.env} mode"
+        Rails.logger.info "** [Opbeat] Disabled in #{Rails.env} environment"
       end
     end
 
