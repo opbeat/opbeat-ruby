@@ -30,17 +30,17 @@ module Opbeat
         traces.shift # root
 
         traces = traces.map do |trace|
-          descriptions = ["#{trace.signature} - #{trace.kind}"]
+          descriptions = ["#{trace.signature} - #{trace.kind}"[0...w]]
 
           if include_parents
-            parents_sig = trace.parents.join(' ')
+            parents_sig = trace.parents.join(' ')[0...w]
             descriptions << parents_sig
           end
 
           indent = (trace.relative_start * f).to_i
 
           longest_desc = descriptions.map(&:length).max
-          desc_indent = [indent, w - longest_desc].min
+          desc_indent = [[indent, w - longest_desc].min, 0].max
 
           span = (trace.duration * f).to_i
 
