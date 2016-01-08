@@ -145,12 +145,12 @@ module Opbeat
       enqueue Worker::PostRequest.new('/errors/', data)
     end
 
-    def capture
+    def capture &block
       unless block_given?
         return Kernel.at_exit do
           if $!
-            logger.debug "Caught a post-mortem exception: #{$!.inspect}"
-            report($!)
+            debug $!.inspect
+            report $!
           end
         end
       end
@@ -160,7 +160,7 @@ module Opbeat
       rescue Error => e
         raise # Don't capture Opbeat errors
       rescue Exception => e
-        report(e)
+        report e
         raise
       end
     end

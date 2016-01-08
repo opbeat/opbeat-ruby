@@ -12,6 +12,7 @@ RSpec.describe Opbeat do
     it { should delegate :trace, to: Opbeat::Client.inst, args: ['test', nil, nil, {}] }
     it { should delegate :report, to: Opbeat::Client.inst, args: [Exception.new, nil] }
     it { should delegate :release, to: Opbeat::Client.inst, args: [{}] }
+    it { should delegate :capture, to: Opbeat::Client.inst }
 
     it { should be_started }
   end
