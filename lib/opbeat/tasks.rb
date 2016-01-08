@@ -13,7 +13,11 @@ namespace :opbeat do
     # log to STDOUT
     Opbeat::Client.inst.config.logger = Logger.new STDOUT
 
-    unless Opbeat.release(rev: rev, branch: ENV['BRANCH'], status: 'completed', inline: true)
+    unless Opbeat.release({
+        rev: rev,
+        branch: ENV['BRANCH'],
+        status: 'completed'
+    }, inline: true)
       exit 1 # release returned nil
     end
   end
