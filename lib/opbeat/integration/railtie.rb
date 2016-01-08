@@ -5,7 +5,8 @@ module Opbeat
   class Railtie < Rails::Railtie
 
     config.opbeat = ActiveSupport::OrderedOptions.new
-    config.opbeat.enabled_environments = Configuration::DEFAULTS[:enabled_environments]
+    # bootstrap options with the defaults
+    Configuration::DEFAULTS.each { |k,v| config.opbeat[k] = v }
 
     initializer "opbeat.configure" do |app|
       config = Configuration.new app.config.opbeat do |conf|
@@ -33,11 +34,9 @@ module Opbeat
       end
     end
 
-    # :nocov:
     rake_tasks do
       require 'opbeat/tasks'
     end
-    # :nocov:
 
   end
 end
