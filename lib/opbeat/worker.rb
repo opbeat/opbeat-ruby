@@ -10,11 +10,10 @@ module Opbeat
       end
     end
 
-    def initialize config, queue
+    def initialize config, queue, http_client
       @config = config
       @queue = queue
-
-      @http_client = HttpClient.new config
+      @http_client = http_client
     end
 
     attr_reader :config

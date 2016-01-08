@@ -123,6 +123,14 @@ module Opbeat
           expect(subject.queue.length).to be 1
           expect(subject.queue.pop).to be_a Worker::PostRequest
         end
+
+        it "may send inline" do
+          release = { rev: "abc123", status: 'completed' }
+
+          subject.release release, inline: true
+
+          expect(WebMock).to have_requested(:post, %r{/releases/$}).with(body: release)
+        end
       end
 
     end

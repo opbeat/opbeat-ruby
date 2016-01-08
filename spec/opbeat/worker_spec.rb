@@ -3,11 +3,10 @@ require 'spec_helper'
 module Opbeat
   RSpec.describe Worker do
 
-
     let :worker do
       config = Configuration.new
       @queue = Queue.new
-      Worker.new config, @queue
+      Worker.new config, @queue, HttpClient.new(config)
     end
 
     describe "#run" do

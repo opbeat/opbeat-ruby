@@ -55,6 +55,7 @@ module Opbeat
       @config = config
       @subscriber = Subscriber.new config, self
       @transaction_info = TransactionInfo.new
+      @http_client = HttpClient.new config
 
       @queue = Queue.new
 
@@ -167,9 +168,15 @@ module Opbeat
 
     # releases
 
-    def release rel
-      info "Sending release #{rel[:rev]}"
-      enqueue Worker::PostRequest.new('/releases/', rel)
+    def release rel, inline: false
+      rev = rel[:rev]
+      if inline
+        debug "Sending release #{rev}"
+        @http_client.post '/releases/', rel
+      else
+        debug "Enqueuing release #{rev}"
+        enqueue Worker::PostRequest.new('/releases/', rel)
+      end
     end
 
     private
@@ -186,7 +193,7 @@ module Opbeat
 
       @worker_thread = Thread.new do
         begin
-          Worker.new(config, @queue).run
+          Worker.new(config, @queue, @http_client).run
         rescue => e
           fatal "Failed booting worker:\n#{e.inspect}"
           debug e.backtrace.join("\n")
