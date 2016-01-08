@@ -13,9 +13,9 @@ module Opbeat
 
         new(
           true,
-          user.respond_to?(:id) && user.id,
-          user.respond_to?(:username) && user.username,
-          user.respond_to?(:email) && user.email
+          user.respond_to?(:id) ? user.id : nil,
+          user.respond_to?(:username) ? user.username : nil,
+          user.respond_to?(:email) ? user.email : nil
         )
       end
     end
