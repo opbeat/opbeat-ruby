@@ -48,8 +48,12 @@ module Opbeat
       end
     end
 
-    def validate
-      # TODO
+    def validate!
+      %w{app_id secret_token organization_id}.each do |key|
+        raise Error.new("Configuration missing `#{key}'") unless self.send(key)
+      end
+
+      true
     end
   end
 end

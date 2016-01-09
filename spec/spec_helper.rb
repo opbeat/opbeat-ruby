@@ -36,7 +36,11 @@ RSpec.configure do |config|
   end
 
   config.around :each, start: true do |example|
-    config = Opbeat::Configuration.new
+    config = Opbeat::Configuration.new(
+      app_id: 'x',
+      organization_id: 'y',
+      secret_token: 'z'
+    )
     Opbeat.start! config
     example.call
     Opbeat.stop!
