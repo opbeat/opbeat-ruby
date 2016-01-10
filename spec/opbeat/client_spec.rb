@@ -3,7 +3,7 @@ require 'spec_helper'
 module Opbeat
   RSpec.describe Client do
 
-    let(:config) { Configuration.new }
+    let(:config) { Configuration.new app_id: 'x', organization_id: 'y', secret_token: 'z' }
 
     describe ".start!" do
       it "set's up an instance and only one" do
@@ -132,7 +132,47 @@ module Opbeat
           expect(WebMock).to have_requested(:post, %r{/releases/$}).with(body: release)
         end
       end
+    end
 
+    context "with performance disabled" do
+      subject do
+        Opbeat::Client.inst
+      end
+
+      before do
+        config.disable_performance = true
+        Opbeat.start! config
+      end
+      after { Opbeat.stop! }
+
+      describe "#transaction" do
+        it "yields" do
+          block = lambda { }
+          expect(block).to receive(:call)
+          Client.inst.transaction('Test') { block.call }
+        end
+        it "returns nil" do
+          expect(Client.inst.transaction 'Test').to be_nil
+        end
+      end
+
+      describe "#trace" do
+        it "yields" do
+          block = lambda { }
+          expect(block).to receive(:call)
+          Client.inst.trace('Test', 'trace') { block.call }
+        end
+        it "returns nil" do
+          expect(Client.inst.trace 'Test', 'test').to be_nil
+        end
+      end
+    end
+
+    context "with errors disabled" do
+      describe "#report" do
+        it "doesn't do anything" do
+        end
+      end
     end
   end
 end

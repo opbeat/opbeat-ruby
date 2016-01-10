@@ -21,8 +21,6 @@ module Opbeat
   #
   # @param conf [Configuration] An Configuration object
   def self.start! conf
-    conf.validate!
-
     Client.start! conf
   end
 

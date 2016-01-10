@@ -35,6 +35,7 @@ module Opbeat
 
       LOCK.synchronize do
         return @instance if @instance
+        config.validate!
         @instance = new(config).start!
       end
     end
@@ -53,14 +54,16 @@ module Opbeat
 
     def initialize config
       @config = config
-      @subscriber = Subscriber.new config, self
-      @transaction_info = TransactionInfo.new
-      @http_client = HttpClient.new config
 
+      @http_client = HttpClient.new config
       @queue = Queue.new
 
-      @pending_transactions = []
-      @last_sent_transactions = Time.now
+      unless config.disable_performance
+        @transaction_info = TransactionInfo.new
+        @subscriber = Subscriber.new config, self
+        @pending_transactions = []
+        @last_sent_transactions = Time.now
+      end
     end
 
     attr_reader :config, :queue, :pending_transactions
@@ -68,14 +71,14 @@ module Opbeat
     def start!
       info "Starting client"
 
-      @subscriber.register!
+      @subscriber.register! if @subscriber
 
       self
     end
 
     def stop!
       kill_worker
-      unregister!
+      unregister! if @subscriber
     end
 
     # metrics
@@ -89,6 +92,11 @@ module Opbeat
     end
 
     def transaction endpoint, kind = nil, result = nil
+      if config.disable_performance
+        return yield if block_given?
+        return nil
+      end
+
       if transaction = current_transaction
         return yield(transaction) if block_given?
         return transaction
@@ -110,6 +118,11 @@ module Opbeat
     end
 
     def trace *args, &block
+      if config.disable_performance
+        return yield if block_given?
+        return nil
+      end
+
       unless transaction = current_transaction
         return yield if block_given?
         return
