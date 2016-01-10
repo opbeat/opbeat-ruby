@@ -148,6 +148,8 @@ module Opbeat
     # errors
 
     def report exception, opts = {}
+      return if config.disable_errors
+
       return unless exception
 
       unless exception.backtrace

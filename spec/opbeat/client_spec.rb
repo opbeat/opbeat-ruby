@@ -169,8 +169,23 @@ module Opbeat
     end
 
     context "with errors disabled" do
+      subject do
+        Opbeat::Client.inst
+      end
+
+      before do
+        config.disable_errors = true
+        Opbeat.start! config
+      end
+      after { Opbeat.stop! }
+
       describe "#report" do
         it "doesn't do anything" do
+          exception = Exception.new('BOOM')
+
+          Client.inst.report exception
+
+          expect(Client.inst.queue.length).to be 0
         end
       end
     end
