@@ -8,6 +8,9 @@ gem 'timecop'
 gem 'webmock'
 gem 'rack-test'
 
+gem 'yard'
+gem 'simplecov'
+
 # external libs
 
 unless RUBY_VERSION.to_i <= 1
