@@ -26,18 +26,18 @@ module Opbeat
               kind: 'special.kind',
               result: 200,
               timestamp: 694220400,
-              durations: [100.0, 100.0]
+              durations: [100.00002384185791, 100.00002384185791]
             }, {
               transaction: 'endpoint',
               result: 500,
               kind: 'special.kind',
               timestamp: 694220400,
-              durations: [100.0]
+              durations: [100.00002384185791]
             }],
             traces: [{
               transaction: 'endpoint',
               signature: 'endpoint',
-              durations: [[100.0, 100.0], [100.0, 100.0], [100.0, 100.0]],
+              durations: [[100.00002384185791, 100.00002384185791], [100.00002384185791, 100.00002384185791], [100.00002384185791, 100.00002384185791]],
               start_time: 0.0,
               kind: 'transaction',
               timestamp: 694220400,

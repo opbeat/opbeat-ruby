@@ -36,9 +36,7 @@ if defined? Resque
       job = worker.reserve
       worker.perform job
 
-      expect(WebMock).to have_requested(:post, %r{/errors/$}).with({
-        body: /{"message":"Exception: BOOM"/
-      })
+      expect(Opbeat::Client.inst.queue.length).to be 1
     end
 
   end

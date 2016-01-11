@@ -15,7 +15,10 @@ module Opbeat
       use_ssl: true,
       current_user_method: :current_user,
       environment: ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'default',
-      transaction_post_interval: 60
+      transaction_post_interval: 60,
+
+      disable_performance: false,
+      disable_errors: false
     }.freeze
 
     attr_accessor :secret_token
@@ -36,6 +39,9 @@ module Opbeat
     attr_accessor :environment
     attr_accessor :transaction_post_interval
 
+    attr_accessor :disable_performance
+    attr_accessor :disable_errors
+
     attr_accessor :view_paths
 
     def initialize opts = {}
@@ -48,8 +54,12 @@ module Opbeat
       end
     end
 
-    def validate
-      # TODO
+    def validate!
+      %w{app_id secret_token organization_id}.each do |key|
+        raise Error.new("Configuration missing `#{key}'") unless self.send(key)
+      end
+
+      true
     end
   end
 end

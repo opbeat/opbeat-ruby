@@ -66,14 +66,20 @@ module Opbeat
     client.report exception, opts
   end
 
+  # Captures any exceptions raised inside the block
+  #
+  def self.capture &block
+    client.capture(&block)
+  end
+
   # Notify Opbeat of a release
   #
   # @param rel [Hash]
   # @option rel [String] :rev Revision
   # @option rel [String] :branch
   # @return [Net::HTTPResponse]
-  def self.release rel
-    client.release rel
+  def self.release rel, opts = {}
+    client.release rel, opts
   end
 
   private

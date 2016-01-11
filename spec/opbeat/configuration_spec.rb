@@ -20,5 +20,29 @@ module Opbeat
       expect(conf.timeout).to be 1000
     end
 
+    describe "#validate" do
+      let(:auth_opts) { { app_id: 'x', organization_id: 'y', secret_token: 'z' } }
+      it "doesn't raise when all auth options are set" do
+        expect do
+          Configuration.new(auth_opts).validate!
+        end
+      end
+      it "is true" do
+        expect(Configuration.new(auth_opts).validate!).to be true
+      end
+      it "needs an app_id" do
+        auth_opts.delete(:app_id)
+        expect { Configuration.new(auth_opts).validate! }.to raise_error(Error)
+      end
+      it "needs an organization_id" do
+        auth_opts.delete(:organization_id)
+        expect { Configuration.new(auth_opts).validate! }.to raise_error(Error)
+      end
+      it "needs a secret token" do
+        auth_opts.delete(:secret_token)
+        expect { Configuration.new(auth_opts).validate! }.to raise_error(Error)
+      end
+    end
+
   end
 end

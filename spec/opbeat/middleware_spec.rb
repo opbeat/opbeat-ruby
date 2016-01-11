@@ -8,10 +8,11 @@ module Opbeat
       app = Middleware.new(lambda do |env|
         [200, {}, ['']]
       end)
-      status, _, _ = app.call({})
+      status, _, body = app.call({})
+      body.close
 
       expect(status).to eq 200
-      expect(Opbeat::Client.inst.queue.length).to be 1
+      expect(Opbeat::Client.inst.pending_transactions.length).to be 1
       expect(Opbeat::Client.inst.current_transaction).to be_nil
     end
 
@@ -24,9 +25,7 @@ module Opbeat
       expect(Opbeat::Client.inst.queue.length).to be 1
       expect(Opbeat::Client.inst.current_transaction).to be_nil
 
-      expect(WebMock).to have_requested(:post, %r{/errors/$}).with({
-        body: /{"message":"Exception: BOOM"/
-      })
+      expect(Opbeat::Client.inst.queue.length).to be 1
     end
 
   end

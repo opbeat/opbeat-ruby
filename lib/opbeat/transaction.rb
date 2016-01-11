@@ -3,10 +3,7 @@ require 'opbeat/util'
 module Opbeat
   class Transaction
 
-    DEFAULT_KIND = 'code.custom'.freeze
-    DEFAULT_ROOT_SIGNATURE = 'transaction'.freeze
-
-    def initialize client, endpoint, kind = DEFAULT_KIND, result = nil
+    def initialize client, endpoint, kind = 'code.custom', result = nil
       @client = client
       @endpoint = endpoint
       @kind = kind
@@ -15,16 +12,16 @@ module Opbeat
       @timestamp = Util.nearest_minute.to_i
       @start = Time.now.to_f
 
-      @root = Trace.new(self, endpoint, DEFAULT_ROOT_SIGNATURE, nil).start(@start)
-      @traces = [@root]
+      @root_trace = Trace.new(self, endpoint, 'transaction', nil).start(@start)
+      @traces = [@root_trace]
       @notifications = []
     end
 
     attr_accessor :endpoint, :kind, :result, :duration
-    attr_reader :timestamp, :start, :traces, :notifications
+    attr_reader :timestamp, :start, :traces, :notifications, :root_trace
 
     def endpoint= val
-      @endpoint = @root.signature = val
+      @endpoint = @root_trace.signature = val
     end
 
     def release
@@ -34,14 +31,14 @@ module Opbeat
     def done result = nil
       @result = result
 
-      @root.done
-      @duration = @root.duration
+      @root_trace.done
+      @duration = @root_trace.duration
 
       self
     end
 
     def done?
-      @root.done?
+      @root_trace.done?
     end
 
     def submit result = nil
@@ -49,11 +46,11 @@ module Opbeat
 
       release
 
-      @client.enqueue self
+      @client.submit_transaction self
     end
 
     def trace signature, kind = nil, parents = nil, extra = {}, &block
-      trace = Trace.new self, signature, kind, [@root.signature], extra
+      trace = Trace.new self, signature, kind, [@root_trace.signature], extra
       traces << trace
       trace.start
 

@@ -31,13 +31,13 @@ module Opbeat
 
         expect(transaction.result).to be 200
         expect(transaction.traces.first).to be_done
-        expect(transaction.duration).to be 100.0
+        expect(transaction.duration.round 4).to be 100.0
       end
     end
 
     describe "#submit" do
       it "ends transaction and submits it to the client" do
-        client = double('client', enqueue: true, :current_transaction= => true)
+        client = double('client', submit_transaction: true, :current_transaction= => true)
         transaction = Transaction.new client, 'Test'
 
         travel 0.1
@@ -46,7 +46,7 @@ module Opbeat
         expect(transaction.result).to be 200
         expect(transaction).to be_done
         expect(client).to have_received(:current_transaction=)
-        expect(client).to have_received(:enqueue).with transaction
+        expect(client).to have_received(:submit_transaction).with transaction
       end
     end
 
@@ -69,13 +69,13 @@ module Opbeat
         expect(subject.traces.last.parents).to eq [subject.traces.first.signature]
       end
       it "has a duration" do
-        expect(subject.traces.last.duration).to eq 100.0
+        expect(subject.traces.last.duration.round 4).to eq 100.0
       end
       it "has a relative start" do
         expect(subject.traces.last.relative_start.round 2).to eq 100.0
       end
       it "has a total duration" do
-        expect(subject.duration).to eq 200.0
+        expect(subject.duration.round 4).to eq 200.0
       end
     end
 

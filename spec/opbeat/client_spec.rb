@@ -3,7 +3,7 @@ require 'spec_helper'
 module Opbeat
   RSpec.describe Client do
 
-    let(:config) { Configuration.new }
+    let(:config) { Configuration.new app_id: 'x', organization_id: 'y', secret_token: 'z' }
 
     describe ".start!" do
       it "set's up an instance and only one" do
@@ -62,10 +62,24 @@ module Opbeat
         end
       end
 
-      describe "#enqueue" do
-        it "adds to the queue" do
-          subject.enqueue Transaction.new(subject, 'Test').done(200)
+      describe "#submit_transaction" do
+        it "doesn't send right away" do
+          transaction = Transaction.new('Test', 'test')
+
+          subject.submit_transaction transaction
+
+          expect(subject.queue.length).to be 0
+          expect(WebMock).to_not have_requested(:post, %r{/transactions/$})
+        end
+
+        it "sends if it's long enough ago that we sent last" do
+          transaction = Transaction.new('Test', 'test')
+          subject.instance_variable_set :@last_sent_transactions, Time.now - 61
+
+          subject.submit_transaction transaction
+
           expect(subject.queue.length).to be 1
+          expect(subject.queue.pop).to be_a Worker::PostRequest
         end
       end
 
@@ -75,9 +89,8 @@ module Opbeat
 
           subject.report exception
 
-          expect(WebMock).to have_requested(:post, %r{/errors/$}).with({
-            body: /{"message":"Exception: BOOM/
-          })
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop).to be_a Worker::PostRequest
         end
 
         it "skips nil exceptions" do
@@ -96,9 +109,8 @@ module Opbeat
             end
           end.to raise_exception(Exception)
 
-          expect(WebMock).to have_requested(:post, %r{/errors/$}).with({
-            body: /{"message":"Exception: BOOM"/
-          })
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop).to be_a Worker::PostRequest
         end
       end
 
@@ -108,12 +120,74 @@ module Opbeat
 
           subject.release release
 
-          expect(WebMock).to have_requested(:post, %r{/releases/$}).with({
-            body: '{"rev":"abc123","status":"completed"}'
-          })
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop).to be_a Worker::PostRequest
+        end
+
+        it "may send inline" do
+          release = { rev: "abc123", status: 'completed' }
+
+          subject.release release, inline: true
+
+          expect(WebMock).to have_requested(:post, %r{/releases/$}).with(body: release)
+        end
+      end
+    end
+
+    context "with performance disabled" do
+      subject do
+        Opbeat::Client.inst
+      end
+
+      before do
+        config.disable_performance = true
+        Opbeat.start! config
+      end
+      after { Opbeat.stop! }
+
+      describe "#transaction" do
+        it "yields" do
+          block = lambda { }
+          expect(block).to receive(:call)
+          Client.inst.transaction('Test') { block.call }
+        end
+        it "returns nil" do
+          expect(Client.inst.transaction 'Test').to be_nil
         end
       end
 
+      describe "#trace" do
+        it "yields" do
+          block = lambda { }
+          expect(block).to receive(:call)
+          Client.inst.trace('Test', 'trace') { block.call }
+        end
+        it "returns nil" do
+          expect(Client.inst.trace 'Test', 'test').to be_nil
+        end
+      end
+    end
+
+    context "with errors disabled" do
+      subject do
+        Opbeat::Client.inst
+      end
+
+      before do
+        config.disable_errors = true
+        Opbeat.start! config
+      end
+      after { Opbeat.stop! }
+
+      describe "#report" do
+        it "doesn't do anything" do
+          exception = Exception.new('BOOM')
+
+          Client.inst.report exception
+
+          expect(Client.inst.queue.length).to be 0
+        end
+      end
     end
   end
 end

@@ -33,9 +33,7 @@ if defined?(Sidekiq)
         MyWorker.perform_async exception
       end.to raise_error(Exception)
 
-      expect(WebMock).to have_requested(:post, %r{/errors/$}).with({
-        body: /{"message":"RuntimeError: BOOM"/
-      })
+      expect(Opbeat::Client.inst.queue.length).to be 1
     end
 
   end

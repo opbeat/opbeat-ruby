@@ -46,6 +46,7 @@ module Opbeat
 
           def strip_load_path path
             prefix = $:
+              .map(&:to_s)
               .select { |s| path.start_with?(s) }
               .sort_by { |s| s.length }
               .last

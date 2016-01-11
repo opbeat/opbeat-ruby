@@ -5,6 +5,7 @@ require 'opbeat/worker'
 require 'opbeat/transaction'
 require 'opbeat/trace'
 require 'opbeat/error_message'
+require 'opbeat/data_builders'
 
 module Opbeat
   # @api private
@@ -34,6 +35,7 @@ module Opbeat
 
       LOCK.synchronize do
         return @instance if @instance
+        config.validate!
         @instance = new(config).start!
       end
     end
@@ -41,8 +43,7 @@ module Opbeat
     def self.stop!
       LOCK.synchronize do
         return unless @instance
-        @instance.kill_worker
-        @instance.unregister!
+        @instance.stop!
         @instance = nil
       end
     end
@@ -53,25 +54,31 @@ module Opbeat
 
     def initialize config
       @config = config
-      @subscriber = Subscriber.new config, self
-      @transaction_info = TransactionInfo.new
-      @http_client = HttpClient.new config
 
+      @http_client = HttpClient.new config
       @queue = Queue.new
+
+      unless config.disable_performance
+        @transaction_info = TransactionInfo.new
+        @subscriber = Subscriber.new config, self
+        @pending_transactions = []
+        @last_sent_transactions = Time.now
+      end
     end
 
-    attr_reader :config, :queue
+    attr_reader :config, :queue, :pending_transactions
 
     def start!
       info "Starting client"
 
-      @subscriber.register!
+      @subscriber.register! if @subscriber
 
       self
     end
 
-    def unregister!
-      @subscriber.unregister!
+    def stop!
+      kill_worker
+      unregister! if @subscriber
     end
 
     # metrics
@@ -85,6 +92,11 @@ module Opbeat
     end
 
     def transaction endpoint, kind = nil, result = nil
+      if config.disable_performance
+        return yield if block_given?
+        return nil
+      end
+
       if transaction = current_transaction
         return yield(transaction) if block_given?
         return transaction
@@ -106,6 +118,11 @@ module Opbeat
     end
 
     def trace *args, &block
+      if config.disable_performance
+        return yield if block_given?
+        return nil
+      end
+
       unless transaction = current_transaction
         return yield if block_given?
         return
@@ -114,14 +131,74 @@ module Opbeat
       transaction.trace(*args, &block)
     end
 
-    def enqueue transaction
+    def submit_transaction transaction
       ensure_worker_running
 
-      if config.environment == 'development'.freeze
-        debug { Util::Inspector.new.transaction transaction }
+      if config.environment == 'development'
+        debug { Util::Inspector.new.transaction transaction, include_parents: true }
       end
 
-      @queue << transaction
+      @pending_transactions << transaction
+
+      if should_send_transactions?
+        flush_transactions
+      end
+    end
+
+    # errors
+
+    def report exception, opts = {}
+      return if config.disable_errors
+
+      return unless exception
+
+      unless exception.backtrace
+        exception.set_backtrace caller
+      end
+
+      error_message = ErrorMessage.from_exception(config, exception, opts)
+      data = DataBuilders::Error.new(config).build error_message
+      enqueue Worker::PostRequest.new('/errors/', data)
+    end
+
+    def capture &block
+      unless block_given?
+        return Kernel.at_exit do
+          if $!
+            debug $!.inspect
+            report $!
+          end
+        end
+      end
+
+      begin
+        yield
+      rescue Error => e
+        raise # Don't capture Opbeat errors
+      rescue Exception => e
+        report e
+        raise
+      end
+    end
+
+    # releases
+
+    def release rel, inline: false
+      rev = rel[:rev]
+      if inline
+        debug "Sending release #{rev}"
+        @http_client.post '/releases/', rel
+      else
+        debug "Enqueuing release #{rev}"
+        enqueue Worker::PostRequest.new('/releases/', rel)
+      end
+    end
+
+    private
+
+    def enqueue request
+      ensure_worker_running
+      @queue << request
     end
 
     def start_worker
@@ -148,54 +225,6 @@ module Opbeat
       @worker_thread = nil
     end
 
-    # errors
-
-    def report exception, opts = {}
-      return unless exception
-
-      unless exception.backtrace
-        exception.set_backtrace caller
-      end
-
-      begin
-        error_message = ErrorMessage.from_exception(config, exception, opts)
-        data = DataBuilders::Error.new(config).build error_message
-        @http_client.post '/errors/', data
-      rescue => e
-        fatal "Failed to report error: #{e.inspect}"
-        debug "error_message:#{error_message}"
-      end
-    end
-
-    def capture
-      unless block_given?
-        return Kernel.at_exit do
-          if $!
-            logger.debug "Caught a post-mortem exception: #{$!.inspect}"
-            report($!)
-          end
-        end
-      end
-
-      begin
-        yield
-      rescue Error => e
-        raise # Don't capture Opbeat errors
-      rescue Exception => e
-        report(e)
-        raise
-      end
-    end
-
-    # releases
-
-    def release rel
-      info "Sending release #{rel[:rev]}"
-      @http_client.post '/releases/', rel
-    end
-
-    private
-
     def ensure_worker_running
       return if worker_running?
 
@@ -207,6 +236,22 @@ module Opbeat
 
     def worker_running?
       @worker_thread && @worker_thread.alive?
+    end
+
+    def unregister!
+      @subscriber.unregister!
+    end
+
+    def should_send_transactions?
+      Time.now - @last_sent_transactions > config.transaction_post_interval
+    end
+
+    def flush_transactions
+      path = '/transactions/'
+      data = DataBuilders::Transactions.new(config).build(@pending_transactions)
+      enqueue Worker::PostRequest.new(path, data)
+      @last_sent_transactions = Time.now
+      @pending_transactions = []
     end
 
   end

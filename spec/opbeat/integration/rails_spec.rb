@@ -10,7 +10,8 @@ describe 'Rails integration' do
   def boot
     TinderButForHotDogs.initialize!
     TinderButForHotDogs.routes.draw do
-      resources :users
+      get 'error', to: 'users#error'
+      root to: 'users#index'
     end
   end
 
@@ -32,6 +33,10 @@ describe 'Rails integration' do
       def index
         render text: 'HOT DOGS!'
       end
+
+      def error
+        raise Exception.new("NO KETCHUP!")
+      end
     end
 
     boot
@@ -50,28 +55,27 @@ describe 'Rails integration' do
 
   before :each do
     Opbeat::Client.inst.queue.clear
+    Opbeat::Client.inst.instance_variable_set :@pending_transactions, []
   end
 
   it "adds an exception handler and handles exceptions" do
-    get '/404'
+    get '/error'
 
-    expect(WebMock).to have_requested(:post, %r{/errors/$}).with({
-      body: %r{ActionController::RoutingError.*404}
-    })
+    expect(WebMock).to have_requested(:post, %r{/errors/$})
   end
 
   it "traces actions and enqueues transaction" do
-    get '/users'
+    get '/'
 
-    expect(Opbeat::Client.inst.queue.length).to be 1
+    expect(Opbeat::Client.inst.pending_transactions.length).to be 1
   end
 
   it "logs when failing to report error" do
     allow(Opbeat::Client.inst).to receive(:report).and_raise
-    allow(Rails.logger).to receive(:debug)
+    allow(Rails.logger).to receive(:error)
 
     get '/404'
 
-    expect(Rails.logger).to have_received(:debug).with(/\*\* \[Opbeat\] Error capturing/)
+    expect(Rails.logger).to have_received(:error).with(/\*\* \[Opbeat\] Error capturing/)
   end
 end

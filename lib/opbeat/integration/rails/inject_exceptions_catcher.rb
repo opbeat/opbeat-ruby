@@ -8,11 +8,10 @@ module Opbeat
 
         def render_exception_with_opbeat(env, exception)
           begin
-            if Opbeat.started?
-              Opbeat.report(exception, rack_env: env)
-            end
+            Opbeat.report(exception, rack_env: env) if Opbeat.started?
           rescue
-            ::Rails::logger.debug "** [Opbeat] Error capturing or sending exception #{$!}"
+            ::Rails::logger.error "** [Opbeat] Error capturing or sending exception #{$!}"
+            ::Rails::logger.debug $!.backtrace.join("\n")
           end
 
           render_exception_without_opbeat(env, exception)
