@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Opbeat
-  RSpec.describe Util::Inspector, start: true, mock_time: true do
+  RSpec.describe Util::Inspector, start_without_worker: true, mock_time: true do
 
     let(:transaction) do
       Opbeat.transaction 'Test' do |transaction|

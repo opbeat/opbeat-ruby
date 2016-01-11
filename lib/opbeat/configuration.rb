@@ -18,7 +18,10 @@ module Opbeat
       transaction_post_interval: 60,
 
       disable_performance: false,
-      disable_errors: false
+      disable_errors: false,
+
+      # for tests
+      disable_worker: false
     }.freeze
 
     attr_accessor :secret_token
@@ -41,6 +44,8 @@ module Opbeat
 
     attr_accessor :disable_performance
     attr_accessor :disable_errors
+
+    attr_accessor :disable_worker
 
     attr_accessor :view_paths
 

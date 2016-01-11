@@ -35,19 +35,31 @@ RSpec.configure do |config|
     Timecop.return
   end
 
-  config.around :each, start: true do |example|
-    config = Opbeat::Configuration.new(
+  def build_config attrs = {}
+    Opbeat::Configuration.new({
       app_id: 'x',
       organization_id: 'y',
       secret_token: 'z'
-    )
-    Opbeat.start! config
+    }.merge(attrs))
+  end
+
+  config.around :each, start: true do |example|
+    Opbeat.start! build_config
+    example.call
+    Opbeat.stop!
+  end
+
+  config.around :each, start_without_worker: true do |example|
+    Opbeat.start! build_config(disable_worker: true)
     example.call
     Opbeat.stop!
   end
 end
 
-RSpec::Matchers.define :delegate do |method, to:, args:nil|
+RSpec::Matchers.define :delegate do |method, opts|
+  to = opts[:to]
+  args = opts[:args]
+
   match do |delegator|
     unless to.respond_to?(method)
       raise NoMethodError.new("no method :#{method} on #{to}")

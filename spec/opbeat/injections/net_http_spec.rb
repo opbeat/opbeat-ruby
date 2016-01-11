@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'open-uri'
 
 module Opbeat
-  RSpec.describe 'net/http integration', start: true do
+  RSpec.describe 'net/http integration', start_without_worker: true do
 
     it "is installed" do
       reg = Opbeat::Injections.installed['Net::HTTP']

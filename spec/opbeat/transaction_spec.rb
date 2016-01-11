@@ -31,7 +31,7 @@ module Opbeat
 
         expect(transaction.result).to be 200
         expect(transaction.traces.first).to be_done
-        expect(transaction.duration.round 4).to be 100.0
+        expect(transaction.duration.round 4).to eq 100.0
       end
     end
 

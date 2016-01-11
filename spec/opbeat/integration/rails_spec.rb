@@ -27,6 +27,7 @@ describe 'Rails integration' do
       config.opbeat.app_id = 'APP_ID'
       config.opbeat.organization_id = 'ORGANIZATION_ID'
       config.opbeat.secret_token = 'SECRET_TOKEN'
+      config.opbeat.disable_worker = true
     end
 
     class UsersController < ActionController::Base
@@ -61,7 +62,7 @@ describe 'Rails integration' do
   it "adds an exception handler and handles exceptions" do
     get '/error'
 
-    expect(WebMock).to have_requested(:post, %r{/errors/$})
+    expect(Opbeat::Client.inst.queue.length).to be 1
   end
 
   it "traces actions and enqueues transaction" do

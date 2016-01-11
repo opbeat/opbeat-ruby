@@ -9,7 +9,7 @@ module Opbeat
       DASH = "-".freeze
       QUESTION = "?".freeze
 
-      def self.from_rack_env env, filter: nil
+      def self.from_rack_env env, opts = {}
         req = Rack::Request.new env
 
         http = new(
@@ -45,7 +45,7 @@ module Opbeat
           req.body.rewind
         end
 
-        if filter
+        if filter = opts[:filter]
           http.apply_filter filter
         end
 

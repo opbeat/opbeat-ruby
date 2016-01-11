@@ -1,0 +1,27 @@
+---
+language: ruby
+cache: bundler
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1.6
+  - 2.2.3
+gemfiles:
+  - gemfiles/Gemfile.rails-3.2.x
+  - gemfiles/Gemfile.rails-4.0.x
+  - gemfiles/Gemfile.rails-4.1.x
+  - gemfiles/Gemfile.rails-4.2.x
+matrix:
+  exclude:
+    # Rails 4.0+ requires ruby 2.0+
+    - rvm: 1.9.3
+      Gemfile: gemfiles/Gemfile.rails-4.0.x
+    - rvm: 1.9.3
+      Gemfile: gemfiles/Gemfile.rails-4.1.x
+    - rvm: 1.9.3
+      Gemfile: gemfiles/Gemfile.rails-4.2.x
+
+notifications:
+  email: false
+  slack:
+    secure: IniiL3PdFsht2zykTwd/z5Et/L1U6GzsmMC1LrgccKCrvLsdcdlBU3VrAgIb1GT9FPEFpb5sl7FEBN80p6uW15uO57onUawFaSWDhSA3eXG1ImmunVPJ20U4NkJvMbnUdZXQ9XXqOw1ggkR7GrD0PM9Nzr4puWaaGq42UJjdaq0=

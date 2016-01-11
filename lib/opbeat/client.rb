@@ -183,9 +183,9 @@ module Opbeat
 
     # releases
 
-    def release rel, inline: false
+    def release rel, opts = {}
       rev = rel[:rev]
-      if inline
+      if opts[:inline]
         debug "Sending release #{rev}"
         @http_client.post '/releases/', rel
       else
@@ -205,6 +205,11 @@ module Opbeat
       return if worker_running?
 
       info "Starting worker in thread"
+
+      if config.disable_worker
+        info "Worker disabled"
+        return
+      end
 
       @worker_thread = Thread.new do
         begin
