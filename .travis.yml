@@ -6,7 +6,7 @@ rvm:
   - 2.0.0
   - 2.1.6
   - 2.2.3
-gemfiles:
+gemfile:
   - gemfiles/Gemfile.rails-3.2.x
   - gemfiles/Gemfile.rails-4.0.x
   - gemfiles/Gemfile.rails-4.1.x
@@ -20,6 +20,7 @@ matrix:
       Gemfile: gemfiles/Gemfile.rails-4.1.x
     - rvm: 1.9.3
       Gemfile: gemfiles/Gemfile.rails-4.2.x
+  include:
 
 notifications:
   email: false
