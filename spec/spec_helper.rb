@@ -47,7 +47,10 @@ RSpec.configure do |config|
   end
 end
 
-RSpec::Matchers.define :delegate do |method, to:, args:nil|
+RSpec::Matchers.define :delegate do |method, opts|
+  to = opts[:to]
+  args = opts[:args]
+
   match do |delegator|
     unless to.respond_to?(method)
       raise NoMethodError.new("no method :#{method} on #{to}")
