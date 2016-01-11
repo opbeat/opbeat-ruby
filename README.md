@@ -2,7 +2,7 @@
   <img src='http://opbeat-brand-assets.s3-website-us-east-1.amazonaws.com/svg/logo/logo.svg' width=400 alt='Opbeat' />
 </h1>
 
-![Build status](https://travis-ci.org/opbeat/opbeat-ruby.svg)
+[![Build status](https://travis-ci.org/opbeat/opbeat-ruby.svg)](https://travis-ci.org/opbeat/opbeat-ruby)
 
 ## Installation
 
