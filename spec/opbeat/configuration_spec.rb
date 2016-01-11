@@ -32,15 +32,15 @@ module Opbeat
       end
       it "needs an app_id" do
         auth_opts.delete(:app_id)
-        expect { Configuration.new(auth_opts).validate! }.to raise_error(Error)
+        expect(Configuration.new(auth_opts).validate!).to be false
       end
       it "needs an organization_id" do
         auth_opts.delete(:organization_id)
-        expect { Configuration.new(auth_opts).validate! }.to raise_error(Error)
+        expect(Configuration.new(auth_opts).validate!).to be false
       end
       it "needs a secret token" do
         auth_opts.delete(:secret_token)
-        expect { Configuration.new(auth_opts).validate! }.to raise_error(Error)
+        expect(Configuration.new(auth_opts).validate!).to be false
       end
     end
 

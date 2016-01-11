@@ -35,7 +35,6 @@ module Opbeat
 
       LOCK.synchronize do
         return @instance if @instance
-        config.validate!
         @instance = new(config).start!
       end
     end
@@ -43,6 +42,7 @@ module Opbeat
     def self.stop!
       LOCK.synchronize do
         return unless @instance
+
         @instance.stop!
         @instance = nil
       end

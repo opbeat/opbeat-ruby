@@ -34,6 +34,12 @@ module Opbeat
 
     def process_request req
       debug "Worker processing #{req.path}"
+
+      unless config.validate!
+        info "Invalid config - Skipping posting to Opbeat"
+        return
+      end
+
       begin
         @http_client.post(req.path, req.data)
       rescue => e

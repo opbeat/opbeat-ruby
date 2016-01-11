@@ -65,6 +65,9 @@ module Opbeat
       end
 
       true
+    rescue Error => e
+      logger.error e.message
+      false
     end
   end
 end

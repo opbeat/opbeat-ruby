@@ -10,10 +10,6 @@ RSpec.describe Opbeat do
       expect(Opbeat::Client).to receive(:start!).with(conf) { true }
       Opbeat.start! conf
     end
-    it "validates configuration" do
-      conf = Opbeat::Configuration.new
-      expect { Opbeat.start! conf }.to raise_error(Opbeat::Error)
-    end
   end
 
   it { should delegate :stop!, to: Opbeat }
