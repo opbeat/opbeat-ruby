@@ -73,6 +73,7 @@ module Opbeat
     end
 
     def stop!
+      flush_transactions
       kill_worker
       unregister! if @subscriber
     end
@@ -221,7 +222,7 @@ module Opbeat
     def kill_worker
       return unless worker_running?
       @queue << Worker::StopMessage.new
-      @worker_thread.join 1
+      @worker_thread.join 3
       @worker_thread = nil
     end
 

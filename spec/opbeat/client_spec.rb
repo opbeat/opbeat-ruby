@@ -14,11 +14,11 @@ module Opbeat
     end
 
     describe ".stop!" do
-      it "kills the instance" do
+      it "kills the instance but flushes before" do
         Client.start! config
-        expect(Client.inst).to receive(:kill_worker)
-        expect(Client.inst).to receive(:unregister!)
+        Client.inst.submit_transaction Transaction.new(Client.inst, 'Test').done(200)
         Client.stop!
+        expect(WebMock).to have_requested(:post, %r{/transactions/$})
         expect(Client.inst).to be_nil
       end
     end
