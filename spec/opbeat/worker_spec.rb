@@ -4,7 +4,7 @@ module Opbeat
   RSpec.describe Worker do
 
     let :worker do
-      config = Configuration.new
+      config = build_config
       @queue = Queue.new
       Worker.new config, @queue, HttpClient.new(config)
     end
