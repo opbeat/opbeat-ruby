@@ -3,9 +3,12 @@ require 'spec_helper'
 module Opbeat
   RSpec.describe Worker do
 
+    before do
+      @queue = Queue.new
+    end
+
     let :worker do
       config = build_config
-      @queue = Queue.new
       Worker.new config, @queue, HttpClient.new(config)
     end
 
@@ -28,6 +31,21 @@ module Opbeat
 
           expect(WebMock).to have_requested(:post, %r{/errors/$}).with(body: {id: 1})
           expect(WebMock).to have_requested(:post, %r{/errors/$}).with(body: {id: 2})
+        end
+      end
+
+      context "can be stopped by sending a message" do
+        it "loops until stopped" do
+          thread = Thread.new do
+            worker.run
+          end
+
+          @queue << Worker::StopMessage.new
+
+          thread.join
+
+          expect(thread).to_not be_alive
+          expect(@queue).to be_empty
         end
       end
     end

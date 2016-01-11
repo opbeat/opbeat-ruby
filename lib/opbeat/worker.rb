@@ -10,6 +10,8 @@ module Opbeat
       end
     end
 
+    class StopMessage; end
+
     def initialize config, queue, http_client
       @config = config
       @queue = queue
@@ -20,17 +22,20 @@ module Opbeat
 
     def run
       loop do
-        process_queue
+        while action = @queue.pop
+          case action
+          when PostRequest
+            process_request action
+          when StopMessage
+            Thread.exit
+          else
+            raise Error.new("Unknown entity in worker queue: #{action.inspect}")
+          end
+        end
       end
     end
 
     private
-
-    def process_queue
-      while req = @queue.pop
-        process_request req
-      end
-    end
 
     def process_request req
       debug "Worker processing #{req.path}"

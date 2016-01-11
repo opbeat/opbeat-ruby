@@ -48,10 +48,6 @@ module Opbeat
       end
     end
 
-    at_exit do
-      stop!
-    end
-
     def initialize config
       @config = config
 
@@ -218,15 +214,14 @@ module Opbeat
           fatal "Failed booting worker:\n#{e.inspect}"
           debug e.backtrace.join("\n")
           raise
-        ensure
-          config.logger.flush
         end
       end
     end
 
     def kill_worker
       return unless worker_running?
-      @worker_thread.kill
+      @queue << Worker::StopMessage.new
+      @worker_thread.join 1
       @worker_thread = nil
     end
 
