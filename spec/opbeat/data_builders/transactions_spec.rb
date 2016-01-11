@@ -20,31 +20,12 @@ module Opbeat
 
           transactions = [transaction1, transaction2, transaction3]
 
-          expect(subject.build transactions).to eq({
-            transactions: [{
-              transaction: 'endpoint',
-              kind: 'special.kind',
-              result: 200,
-              timestamp: 694220400,
-              durations: [100.00002384185791, 100.00002384185791]
-            }, {
-              transaction: 'endpoint',
-              result: 500,
-              kind: 'special.kind',
-              timestamp: 694220400,
-              durations: [100.00002384185791]
-            }],
-            traces: [{
-              transaction: 'endpoint',
-              signature: 'endpoint',
-              durations: [[100.00002384185791, 100.00002384185791], [100.00002384185791, 100.00002384185791], [100.00002384185791, 100.00002384185791]],
-              start_time: 0.0,
-              kind: 'transaction',
-              timestamp: 694220400,
-              parents: [],
-              extra: {}
-            }]
-          })
+          result = subject.build transactions
+          expect(result[:transactions].length).to be 2
+          expect(result[:transactions].map { |t| t[:result] }).to eq [200, 500]
+
+          expect(result[:traces].length). to be 1
+          expect(result[:traces][0][:durations].length).to be 3
         end
       end
 
