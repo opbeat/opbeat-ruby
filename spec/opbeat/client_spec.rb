@@ -31,7 +31,7 @@ module Opbeat
       end
     end
 
-    context "with a running client", start: true do
+    context "with a running client", start_without_worker: true do
       subject { Client.inst }
 
       describe "#transaction" do

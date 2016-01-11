@@ -57,9 +57,10 @@ module Opbeat
       unless config.disable_performance
         @transaction_info = TransactionInfo.new
         @subscriber = Subscriber.new config, self
-        @pending_transactions = []
-        @last_sent_transactions = Time.now
       end
+
+      @pending_transactions = []
+      @last_sent_transactions = Time.now
     end
 
     attr_reader :config, :queue, :pending_transactions
@@ -76,6 +77,10 @@ module Opbeat
       flush_transactions
       kill_worker
       unregister! if @subscriber
+    end
+
+    at_exit do
+      stop!
     end
 
     # metrics
@@ -194,7 +199,6 @@ module Opbeat
     private
 
     def enqueue request
-      ensure_worker_running
       @queue << request
     end
 
@@ -222,7 +226,7 @@ module Opbeat
     def kill_worker
       return unless worker_running?
       @queue << Worker::StopMessage.new
-      @worker_thread.join 3
+      @worker_thread.join 1
       @worker_thread = nil
     end
 
@@ -248,6 +252,8 @@ module Opbeat
     end
 
     def flush_transactions
+      return if @pending_transactions.empty?
+
       path = '/transactions/'
       data = DataBuilders::Transactions.new(config).build(@pending_transactions)
       enqueue Worker::PostRequest.new(path, data)
