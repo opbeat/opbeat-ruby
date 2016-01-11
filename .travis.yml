@@ -20,7 +20,6 @@ matrix:
       Gemfile: gemfiles/Gemfile.rails-4.1.x
     - rvm: 1.9.3
       Gemfile: gemfiles/Gemfile.rails-4.2.x
-  include:
 
 notifications:
   email: false
