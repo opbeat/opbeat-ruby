@@ -16,7 +16,7 @@ if defined?(Delayed)
   )
   Delayed::Worker.backend = Delayed::Backend::Test::Job
 
-  describe Delayed::Plugins::Opbeat, start: true do
+  describe Delayed::Plugins::Opbeat, start_without_worker: true do
     class MyJob
       def blow_up e
         raise e
@@ -29,8 +29,7 @@ if defined?(Delayed)
       MyJob.new.delay.blow_up exception
 
       expect(Delayed::Worker.new.work_off).to eq [0, 1]
-      # expect(Opbeat::Client.inst.queue.length).to be 1
-      expect(WebMock).to have_requested(:post, %r{/errors/$})
+      expect(Opbeat::Client.inst.queue.length).to be 1
     end
   end
 end

@@ -16,7 +16,7 @@ if defined?(Sidekiq)
     chain.add Opbeat::Integration::Sidekiq
   end
 
-  RSpec.describe Opbeat::Integration::Sidekiq, start: true do
+  RSpec.describe Opbeat::Integration::Sidekiq, start_without_worker: true do
 
     class MyWorker
       include Sidekiq::Worker

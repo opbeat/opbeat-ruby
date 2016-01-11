@@ -23,6 +23,14 @@ module Opbeat
       end
     end
 
+    context "without worker spec setting", start_without_worker: true do
+      it "doesn't start a Worker" do
+        expect(Thread).to_not receive(:new)
+        Client.start! config
+        expect(Client.inst).to_not be_nil
+      end
+    end
+
     context "with a running client", start: true do
       subject { Client.inst }
 
@@ -189,5 +197,6 @@ module Opbeat
         end
       end
     end
+
   end
 end

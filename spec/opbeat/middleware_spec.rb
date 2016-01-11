@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'opbeat'
 
 module Opbeat
-  describe Middleware, start: true do
+  describe Middleware, start_without_worker: true do
 
     it "surrounds the request in a transaction" do
       app = Middleware.new(lambda do |env|

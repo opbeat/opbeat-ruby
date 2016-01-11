@@ -9,7 +9,7 @@ end
 # :nocov:
 
 if defined? Resque
-  RSpec.describe 'Resque integration', start: true do
+  RSpec.describe 'Resque integration', start_without_worker: true do
 
     before do
       # mocking redis is a bit much, but sadly necessary

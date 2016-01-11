@@ -206,6 +206,11 @@ module Opbeat
 
       info "Starting worker in thread"
 
+      if config.disable_worker
+        info "Worker disabled"
+        return
+      end
+
       @worker_thread = Thread.new do
         begin
           Worker.new(config, @queue, @http_client).run
