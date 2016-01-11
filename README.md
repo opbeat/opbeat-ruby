@@ -2,6 +2,8 @@
   <img src='http://opbeat-brand-assets.s3-website-us-east-1.amazonaws.com/svg/logo/logo.svg' width=400 alt='Opbeat' />
 </h1>
 
+![Build status](https://travis-ci.org/opbeat/opbeat-ruby.svg)
+
 ## Installation
 
 Add the following to your `Gemfile`:
