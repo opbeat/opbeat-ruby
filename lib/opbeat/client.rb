@@ -248,6 +248,8 @@ module Opbeat
     end
 
     def should_send_transactions?
+      return true if config.transaction_post_interval.nil?
+
       Time.now - @last_sent_transactions > config.transaction_post_interval
     end
 

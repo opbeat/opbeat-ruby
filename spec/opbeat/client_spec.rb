@@ -72,7 +72,7 @@ module Opbeat
 
       describe "#submit_transaction" do
         it "doesn't send right away" do
-          transaction = Transaction.new('Test', 'test')
+          transaction = Transaction.new(subject, 'test')
 
           subject.submit_transaction transaction
 
@@ -81,13 +81,20 @@ module Opbeat
         end
 
         it "sends if it's long enough ago that we sent last" do
-          transaction = Transaction.new('Test', 'test')
+          transaction = Transaction.new(subject, 'test')
           subject.instance_variable_set :@last_sent_transactions, Time.now - 61
 
           subject.submit_transaction transaction
 
           expect(subject.queue.length).to be 1
           expect(subject.queue.pop).to be_a Worker::PostRequest
+        end
+
+        it "sends if interval is disabled" do
+          transaction = Transaction.new(subject, 'test')
+          subject.config.transaction_post_interval = nil
+          subject.submit_transaction transaction
+          expect(subject.queue.length).to be 1
         end
       end
 
