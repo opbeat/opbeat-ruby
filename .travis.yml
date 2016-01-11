@@ -23,10 +23,6 @@ matrix:
       Gemfile: gemfiles/Gemfile.rails-4.1.x
     - rvm: 1.9.3
       Gemfile: gemfiles/Gemfile.rails-4.2.x
-  include:
-    - rvm: 1.9.3
-      env:
-        - SKIP_PROCESSORS=true
 
 notifications:
   email: false
