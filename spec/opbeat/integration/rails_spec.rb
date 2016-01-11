@@ -61,7 +61,7 @@ describe 'Rails integration' do
   it "adds an exception handler and handles exceptions" do
     get '/error'
 
-    expect(WebMock).to have_requested(:post, %r{/errors/$})
+    expect(Opbeat::Client.inst.queue.length).to be 1
   end
 
   it "traces actions and enqueues transaction" do

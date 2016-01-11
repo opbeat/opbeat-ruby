@@ -183,9 +183,9 @@ module Opbeat
 
     # releases
 
-    def release rel, inline: false
+    def release rel, opts = {}
       rev = rel[:rev]
-      if inline
+      if opts[:inline]
         debug "Sending release #{rev}"
         @http_client.post '/releases/', rel
       else

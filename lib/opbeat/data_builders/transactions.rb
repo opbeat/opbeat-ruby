@@ -11,7 +11,7 @@ module Opbeat
             data[:transactions][key][:durations] << transaction.duration
           end
 
-          combine_traces transaction.traces, into: data[:traces]
+          combine_traces transaction.traces, data[:traces]
 
           data
         end.reduce({}) do |data, kv|
@@ -23,16 +23,16 @@ module Opbeat
 
       private
 
-      def combine_traces traces, into:
+      def combine_traces traces, into
         traces.each do |trace|
-        key = [trace.transaction.endpoint, trace.signature, trace.timestamp]
+          key = [trace.transaction.endpoint, trace.signature, trace.timestamp]
 
-        if into[key].nil?
-          into[key] = build_trace(trace)
-        else
-          into[key][:durations] << [trace.duration, trace.transaction.duration]
+          if into[key].nil?
+            into[key] = build_trace(trace)
+          else
+            into[key][:durations] << [trace.duration, trace.transaction.duration]
+          end
         end
-      end
       end
 
       def build_transaction transaction

@@ -27,9 +27,12 @@ module Opbeat
     end
 
     config.after_initialize do
+      require 'opbeat/integration/rails/inject_exceptions_catcher'
       if defined?(ActionDispatch::DebugExceptions)
-        require 'opbeat/integration/rails/inject_exceptions_catcher'
         ActionDispatch::DebugExceptions.send(
+          :include, Opbeat::Integration::Rails::InjectExceptionsCatcher)
+      elsif defined?(::ActionDispatch::ShowExceptions)
+        ::ActionDispatch::ShowExceptions.send(
           :include, Opbeat::Integration::Rails::InjectExceptionsCatcher)
       end
     end

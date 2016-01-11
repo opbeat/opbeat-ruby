@@ -1,3 +1,5 @@
+require 'opbeat/util/constantize'
+
 module Opbeat
   # @api private
   module Injections
@@ -58,7 +60,7 @@ module Opbeat
     end
 
     def self.const_defined? const_name
-      const = ("::" + const_name).constantize rescue nil
+      const = Util.constantize(const_name) rescue nil
       !!const
     end
   end
