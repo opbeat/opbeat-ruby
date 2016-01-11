@@ -19,14 +19,19 @@ module Opbeat
           app.config.middleware.insert 0, Middleware
           Rails.logger.info "** [Opbeat] Client running"
         else
+          # :nocov:
           Rails.logger.info "** [Opbeat] Failed to start"
+          # :nocov:
         end
       else
+        # :nocov:
         Rails.logger.info "** [Opbeat] Disabled in #{Rails.env} environment"
+        # :nocov:
       end
     end
 
     config.after_initialize do
+      # :nocov:
       require 'opbeat/integration/rails/inject_exceptions_catcher'
       if defined?(ActionDispatch::DebugExceptions)
         ActionDispatch::DebugExceptions.send(
@@ -35,10 +40,13 @@ module Opbeat
         ::ActionDispatch::ShowExceptions.send(
           :include, Opbeat::Integration::Rails::InjectExceptionsCatcher)
       end
+      # :nocov:
     end
 
     rake_tasks do
+      # :nocov:
       require 'opbeat/tasks'
+      # :nocov:
     end
 
   end

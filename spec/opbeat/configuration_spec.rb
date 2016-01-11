@@ -22,10 +22,8 @@ module Opbeat
 
     describe "#validate" do
       let(:auth_opts) { { app_id: 'x', organization_id: 'y', secret_token: 'z' } }
-      it "doesn't raise when all auth options are set" do
-        expect do
-          Configuration.new(auth_opts).validate!
-        end
+      it "is true when all auth options are set" do
+        expect(Configuration.new(auth_opts).validate!).to be true
       end
       it "is true" do
         expect(Configuration.new(auth_opts).validate!).to be true
