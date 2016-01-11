@@ -8,7 +8,7 @@ module Opbeat
       app = Middleware.new(lambda do |env|
         [200, {}, ['']]
       end)
-      status, _, body = app.call({})
+      status, _, body = app.call(Rack::MockRequest.env_for '/')
       body.close
 
       expect(status).to eq 200
@@ -21,7 +21,7 @@ module Opbeat
         raise Exception, "BOOM"
       end)
 
-      expect { app.call({}) }.to raise_error(Exception)
+      expect { app.call(Rack::MockRequest.env_for '/') }.to raise_error(Exception)
       expect(Opbeat::Client.inst.queue.length).to be 1
       expect(Opbeat::Client.inst.current_transaction).to be_nil
 
