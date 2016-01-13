@@ -100,7 +100,7 @@ module Opbeat
       end
 
       if transaction = current_transaction
-        return yield(transaction) if block_given?
+        yield transaction if block_given?
         return transaction
       end
 
