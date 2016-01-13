@@ -22,7 +22,7 @@ module Opbeat
 
         # traces' start time is average across collected
         reduced[:traces].each do |trace|
-          trace[:start_time] = trace[:start_time].sum / trace[:start_time].length
+          trace[:start_time] = trace[:start_time].reduce(0, :+) / trace[:start_time].length
         end
 
         reduced
