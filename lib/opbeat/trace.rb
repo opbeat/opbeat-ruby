@@ -24,13 +24,13 @@ module Opbeat
       end
 
       @start_time = Time.now.to_f
-      @relative_start = (@start_time - transaction_start) * 1000
+      @relative_start = (@start_time - transaction_start) * 1000.0
 
       self
     end
 
     def done
-      @duration = ((Time.now.to_f - @start_time) * 1000)
+      @duration = ((Time.now.to_f - @start_time) * 1000.0)
 
       self
     end

@@ -52,7 +52,7 @@ module Opbeat
   # @param extra [Hash] Extra information about the trace
   # @yield [Trace] Optional block encapsulating trace
   # @return [Trace] Unless block given
-  def self.trace signature, kind = nil, parents = nil, extra = {}, &block
+  def self.trace signature, kind = nil, parents = nil, extra = nil, &block
     client.trace signature, kind, parents, extra, &block
   end
 

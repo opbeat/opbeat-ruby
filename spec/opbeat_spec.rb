@@ -22,6 +22,27 @@ RSpec.describe Opbeat do
     it { should delegate :report, to: Opbeat::Client.inst, args: [Exception.new, nil] }
     it { should delegate :release, to: Opbeat::Client.inst, args: [{}, {}] }
     it { should delegate :capture, to: Opbeat::Client.inst }
+
+    describe "a block example", mock_time: true do
+      it "is done" do
+        transaction = Opbeat.transaction 'Test' do
+          travel 0.1
+          Opbeat.trace 'test1' do
+            travel 0.1
+            Opbeat.trace 'test1-1' do
+              travel 0.1
+            end
+            Opbeat.trace 'test1-2' do
+              travel 0.1
+            end
+            travel 0.1
+          end
+        end
+
+        expect(transaction).to be_done
+        expect(transaction.duration).to eq 500
+      end
+    end
   end
 
 end

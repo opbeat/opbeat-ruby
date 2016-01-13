@@ -2,7 +2,7 @@ module Opbeat
   module DataBuilders
     class Transactions < DataBuilder
       def build transactions
-        transactions.reduce({ transactions: {}, traces: {} }) do |data, transaction|
+        reduced = transactions.reduce({ transactions: {}, traces: {} }) do |data, transaction|
           key = [transaction.endpoint, transaction.result, transaction.timestamp]
 
           if data[:transactions][key].nil?
@@ -19,6 +19,13 @@ module Opbeat
           data[key] = collection.values
           data
         end
+
+        # traces' start time is average across collected
+        reduced[:traces].each do |trace|
+          trace[:start_time] = trace[:start_time].sum / trace[:start_time].length
+        end
+
+        reduced
       end
 
       private
@@ -31,6 +38,7 @@ module Opbeat
             into[key] = build_trace(trace)
           else
             into[key][:durations] << [trace.duration, trace.transaction.duration]
+            into[key][:start_time] << trace.relative_start
           end
         end
       end
@@ -50,7 +58,7 @@ module Opbeat
           transaction: trace.transaction.endpoint,
           signature: trace.signature,
           durations: [[trace.duration, trace.transaction.duration]],
-          start_time: trace.relative_start,
+          start_time: [trace.relative_start],
           kind: trace.kind,
           timestamp: trace.timestamp,
           parents: trace.parents || [],

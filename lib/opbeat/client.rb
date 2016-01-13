@@ -93,7 +93,7 @@ module Opbeat
       @transaction_info.current = transaction
     end
 
-    def transaction endpoint, kind = nil, result = nil
+    def transaction endpoint, kind = nil, result = nil, &block
       if config.disable_performance
         return yield if block_given?
         return nil
@@ -110,13 +110,13 @@ module Opbeat
       return transaction unless block_given?
 
       begin
-        result = yield transaction
+        yield transaction
       ensure
         transaction.done
         transaction.release
       end
 
-      result
+      transaction
     end
 
     def trace *args, &block

@@ -51,6 +51,10 @@ module Opbeat
             subject.transaction('Test') { |t| blck.(t) }
             expect(blck).to have_received(:call).with(Transaction)
           end
+          it "returns transaction" do
+            result = subject.transaction('Test') { puts 'asd' }
+            expect(result).to be_a Transaction
+          end
         end
       end
 

@@ -12,8 +12,9 @@ module Opbeat
       @timestamp = Util.nearest_minute.to_i
       @start = Time.now.to_f
 
-      @root_trace = Trace.new(self, endpoint, 'transaction').start(@start)
+      @root_trace = Trace.new(self, endpoint, 'transaction', []).start(@start)
       @traces = [@root_trace]
+
       @notifications = []
     end
 
@@ -47,6 +48,8 @@ module Opbeat
       release
 
       @client.submit_transaction self
+
+      self
     end
 
     def trace signature, kind = nil, parents = nil, extra = nil, &block
