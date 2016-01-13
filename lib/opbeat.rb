@@ -56,6 +56,10 @@ module Opbeat
     client.trace signature, kind, parents, extra, &block
   end
 
+  def self.flush_transactions
+    client.flush_transactions
+  end
+
   # Send an exception to Opbeat
   #
   # @param exception [Exception]

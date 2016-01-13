@@ -3,11 +3,11 @@ require 'opbeat/util'
 module Opbeat
   class Trace
 
-    def initialize transaction, signature, kind = 'code.custom', parents = nil, extra = {}
+    def initialize transaction, signature, kind = nil, parents = nil, extra = nil
       @transaction = transaction
       @signature = signature
-      @kind = kind
-      @parents = parents
+      @kind = kind || 'code.custom'.freeze
+      @parents = parents || []
       @extra = extra
 
       @timestamp = Util.nearest_minute.to_i
@@ -37,6 +37,10 @@ module Opbeat
 
     def done?
       !!duration
+    end
+
+    def running?
+      !done?
     end
 
   end

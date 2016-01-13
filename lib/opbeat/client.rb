@@ -147,6 +147,18 @@ module Opbeat
       end
     end
 
+    def flush_transactions
+      return if @pending_transactions.empty?
+
+      path = '/transactions/'
+      data = DataBuilders::Transactions.new(config).build(@pending_transactions)
+      enqueue Worker::PostRequest.new(path, data)
+      @last_sent_transactions = Time.now
+      @pending_transactions = []
+
+      true
+    end
+
     # errors
 
     def report exception, opts = {}
@@ -251,16 +263,6 @@ module Opbeat
       return true if config.transaction_post_interval.nil?
 
       Time.now - @last_sent_transactions > config.transaction_post_interval
-    end
-
-    def flush_transactions
-      return if @pending_transactions.empty?
-
-      path = '/transactions/'
-      data = DataBuilders::Transactions.new(config).build(@pending_transactions)
-      enqueue Worker::PostRequest.new(path, data)
-      @last_sent_transactions = Time.now
-      @pending_transactions = []
     end
 
   end
