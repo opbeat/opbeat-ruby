@@ -22,7 +22,7 @@ module Opbeat
 
     def post(resource, body)
       path = abs_path(resource)
-      debug "POST #{path}"
+      debug "POST #{resource}"
 
       unless state.should_try?
         info "Temporarily skipping sending to Opbeat due to previous failure."

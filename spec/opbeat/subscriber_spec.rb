@@ -63,7 +63,7 @@ module Opbeat
           transaction.release
         end
         it "adds a stack of parents", mock_time: true do
-          transaction = Opbeat.transaction 'app.rack.request' do
+          transaction = Opbeat.transaction 'Rack' do
             subject.start(*message_args)
             travel 0.1
             Opbeat.trace('thing-1') do

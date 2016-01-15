@@ -3,6 +3,8 @@ require 'opbeat/util'
 module Opbeat
   class Transaction
 
+    ROOT_TRACE_NAME = 'transaction'.freeze
+
     def initialize client, endpoint, kind = 'code.custom', result = nil
       @client = client
       @endpoint = endpoint
@@ -12,7 +14,7 @@ module Opbeat
       @timestamp = Util.nearest_minute.to_i
       @start = Time.now.to_f
 
-      @root_trace = Trace.new(self, endpoint, 'transaction', []).start(@start)
+      @root_trace = Trace.new(self, ROOT_TRACE_NAME, ROOT_TRACE_NAME, []).start(@start)
       @traces = [@root_trace]
 
       @notifications = []

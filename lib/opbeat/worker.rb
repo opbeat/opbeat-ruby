@@ -38,8 +38,6 @@ module Opbeat
     private
 
     def process_request req
-      debug "Worker processing #{req.path}"
-
       unless config.validate!
         info "Invalid config - Skipping posting to Opbeat"
         return

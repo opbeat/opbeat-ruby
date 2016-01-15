@@ -29,9 +29,11 @@ module Opbeat
           descriptions = ["#{trace.signature} - #{trace.kind}"[0...w]]
 
           if opts[:include_parents]
-            parents_sig = trace.parents.join(' ')[0...w]
+            parents_sig = "parents:#{trace.parents.join(',')[0...w]}"
             descriptions << parents_sig
           end
+
+          descriptions << "transaction:#{trace.transaction.endpoint}"
 
           indent = (trace.relative_start * f).to_i
 
@@ -52,10 +54,10 @@ module Opbeat
           lines
         end.join(NEWLINE)
 
-        <<-STR.gsub(/^\s{10}/, '')
-          \n#{"=" * (w.to_i)}
+        <<-STR.gsub(/^\s{8}/, '')
+        \n#{"=" * (w.to_i)}
         #{transaction.endpoint} - kind:#{transaction.kind} - #{transaction.duration}ms
-          +#{"-" * (w.to_i - 2)}+
+        +#{"-" * (w.to_i - 2)}+
         #{traces}
         STR
       end

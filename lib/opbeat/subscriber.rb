@@ -57,7 +57,9 @@ module Opbeat
 
       while notification = transaction.notifications.pop
         if notification == name
-          transaction.traces.select(&:running?).last.done
+          if trace = transaction.traces.select(&:running?).last
+            trace.done
+          end
           return
         end
       end
