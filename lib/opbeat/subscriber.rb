@@ -42,24 +42,22 @@ module Opbeat
 
       unless normalized == :skip
         sig, kind, extra = normalized
-        trace = Trace.new(transaction, sig, kind, nil, extra).start(transaction.start)
-        # debug "                       start:#{sig}"
+
+        trace = Trace.new(transaction, sig, kind, parents_for(transaction), extra)
+        trace.start(transaction.start)
+
+        transaction.traces << trace
       end
 
-      notification = Notification.new(name, trace)
-      transaction.notifications << notification
+      transaction.notifications << name
     end
 
     def finish name, id, payload
       return unless transaction = @client.current_transaction
 
       while notification = transaction.notifications.pop
-        if notification.name == name
-          if trace = notification.trace
-            # debug "                      finish:#{trace.signature}"
-            trace.parents = parents_for(transaction)
-            transaction.traces << trace.done
-          end
+        if notification == name
+          transaction.traces.select(&:running?).last.done
           return
         end
       end
@@ -68,13 +66,7 @@ module Opbeat
     private
 
     def parents_for transaction
-      traces = transaction.notifications.select(&:trace)
-
-      if traces.any?
-        traces.map { |n| n.trace.signature }
-      else
-        [transaction.root_trace.signature]
-      end
+      transaction.traces.select(&:running?).map(&:signature)
     end
 
     def actions_regex

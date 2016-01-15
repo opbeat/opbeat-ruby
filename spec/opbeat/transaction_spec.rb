@@ -79,14 +79,5 @@ module Opbeat
       end
     end
 
-    describe "#endpoint=" do
-      it "renames root trace signature when renaming transaction" do
-        transaction = Transaction.new nil, 'Test'
-        transaction.endpoint = 'tseT'
-        expect(transaction.endpoint).to eq 'tseT'
-        expect(transaction.traces.first.signature).to eq 'tseT'
-      end
-    end
-
   end
 end

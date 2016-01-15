@@ -43,5 +43,9 @@ module Opbeat
       !done?
     end
 
+    def inspect
+      info = %w{signature kind parents extra timestamp duration relative_start}
+      "<Trace #{info.map { |m| "#{m}:#{send(m).inspect}" }.join(' ')}>"
+    end
   end
 end

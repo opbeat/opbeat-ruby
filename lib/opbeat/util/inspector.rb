@@ -23,7 +23,7 @@ module Opbeat
           trace.relative_start
         end
 
-        traces.shift # root
+        # traces.shift # root
 
         traces = traces.map do |trace|
           descriptions = ["#{trace.signature} - #{trace.kind}"[0...w]]
@@ -38,13 +38,16 @@ module Opbeat
           longest_desc = descriptions.map(&:length).max
           desc_indent = [[indent, w - longest_desc].min, 0].max
 
-          span = (trace.duration * f).to_i
-
           lines = descriptions.map do |desc|
             "#{SPACE * desc_indent}#{desc}"
           end
 
-          lines << "#{SPACE * indent}+#{"-" * [(span - 2), 0].max}+"
+          if trace.duration
+            span = (trace.duration * f).to_i
+            lines << "#{SPACE * indent}+#{"-" * [(span - 2), 0].max}+"
+          else
+            lines << "#{SPACE * indent}UNFINISHED"
+          end
 
           lines
         end.join(NEWLINE)

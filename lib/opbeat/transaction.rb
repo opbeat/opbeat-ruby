@@ -21,10 +21,6 @@ module Opbeat
     attr_accessor :endpoint, :kind, :result, :duration
     attr_reader :timestamp, :start, :traces, :notifications, :root_trace
 
-    def endpoint= val
-      @endpoint = @root_trace.signature = val
-    end
-
     def release
       @client.current_transaction = nil
     end
