@@ -23,10 +23,14 @@ module Opbeat
         reduced[:traces].each do |trace|
           # traces' start time is average across collected
           trace[:start_time] = trace[:start_time].reduce(0, :+) / trace[:start_time].length
-        end.delete_if do |trace|
-          # remove parentless traces
-          trace[:parents] == []
         end
+
+        # preserve root
+        root = reduced[:traces].shift
+        # remove parentless traces
+        reduced[:traces].delete_if { |t| t[:parents].empty? }
+        # re-add root
+        reduced[:traces].unshift root
 
         reduced
       end

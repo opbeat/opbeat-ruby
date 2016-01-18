@@ -12,7 +12,6 @@ require 'opbeat/integration/railtie' if defined?(Rails)
 
 require 'opbeat/injections'
 require 'opbeat/injections/net_http'
-require 'opbeat/injections/json'
 require 'opbeat/injections/redis'
 
 require 'opbeat/integration/delayed_job'
@@ -44,6 +43,10 @@ module Opbeat
   # @yield [Transaction] Optional block encapsulating transaction
   # @return [Transaction] Unless block given
   def self.transaction endpoint, kind = nil, result = nil, &block
+    unless client
+      return yield if block_given? else nil
+    end
+
     client.transaction endpoint, kind, result, &block
   end
 
@@ -56,10 +59,18 @@ module Opbeat
   # @yield [Trace] Optional block encapsulating trace
   # @return [Trace] Unless block given
   def self.trace signature, kind = nil, parents = nil, extra = nil, &block
+    unless client
+      return yield if block_given? else nil
+    end
+
     client.trace signature, kind, parents, extra, &block
   end
 
   def self.flush_transactions
+    unless client
+      return yield if block_given? else nil
+    end
+
     client.flush_transactions
   end
 
@@ -70,12 +81,20 @@ module Opbeat
   # @option opts [Hash] :rack_env A rack env object
   # @return [Net::HTTPResponse]
   def self.report exception, opts = {}
+    unless client
+      return yield if block_given? else nil
+    end
+
     client.report exception, opts
   end
 
   # Captures any exceptions raised inside the block
   #
   def self.capture &block
+    unless client
+      return yield if block_given? else nil
+    end
+
     client.capture(&block)
   end
 
@@ -86,16 +105,16 @@ module Opbeat
   # @option rel [String] :branch
   # @return [Net::HTTPResponse]
   def self.release rel, opts = {}
+    unless client
+      return yield if block_given? else nil
+    end
+
     client.release rel, opts
   end
 
   private
 
   def self.client
-    unless Client.inst
-      raise Error.new("Opbeat client wasn't started")
-    end
-
     Client.inst
   end
 end

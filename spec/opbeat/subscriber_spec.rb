@@ -74,7 +74,7 @@ module Opbeat
           end.done(200)
 
           expect(transaction.traces.length).to eq 3
-          expect(transaction.traces.last.parents).to eq ['app.rack.request', 'Controller#index']
+          expect(transaction.traces.last.parents).to eq ['transaction', 'Controller#index']
         end
       end
     end
