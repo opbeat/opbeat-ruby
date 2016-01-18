@@ -152,6 +152,7 @@ module Opbeat
 
       path = '/transactions/'
       data = DataBuilders::Transactions.new(config).build(@pending_transactions)
+      # debug { JSON.pretty_generate data }
       enqueue Worker::PostRequest.new(path, data)
       @last_sent_transactions = Time.now
       @pending_transactions = []

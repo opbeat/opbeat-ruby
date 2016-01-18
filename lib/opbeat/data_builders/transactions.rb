@@ -20,9 +20,12 @@ module Opbeat
           data
         end
 
-        # traces' start time is average across collected
         reduced[:traces].each do |trace|
+          # traces' start time is average across collected
           trace[:start_time] = trace[:start_time].reduce(0, :+) / trace[:start_time].length
+        end.delete_if do |trace|
+          # remove parentless traces
+          trace[:parents] == []
         end
 
         reduced
