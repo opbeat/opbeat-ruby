@@ -4,6 +4,7 @@ require 'opbeat/configuration'
 require 'opbeat/logging'
 require 'opbeat/client'
 require 'opbeat/error'
+require 'opbeat/trace_helpers'
 
 require 'opbeat/middleware'
 
@@ -11,6 +12,7 @@ require 'opbeat/integration/railtie' if defined?(Rails)
 
 require 'opbeat/injections'
 require 'opbeat/injections/net_http'
+require 'opbeat/injections/json'
 
 require 'opbeat/integration/delayed_job'
 require 'opbeat/integration/sidekiq'
