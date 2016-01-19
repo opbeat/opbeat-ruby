@@ -105,6 +105,36 @@ Resque::Failure::Multiple.classes = [Resque::Failure::Opbeat]
 Resque::Failure.backend = Resque::Failure::Multiple
 ```
 
+## Manual profiling
+
+It's easy to add performance tracking wherever you want using the `Opbeat` module.
+
+Here, for example is how you could profile a Sidekiq worker job:
+
+```ruby
+class MyWorker
+  include Sidekiq::Worker
+
+  def perform
+    Opbeat.transaction "MyWorker#perform", "worker.sidekiq" do
+      User.find_each do |user|
+        Opbeat.trace 'run!' do 
+          user.sync_with_payment_provider!
+        end
+      end
+    end.submit(true)
+    # `true` here is the result of the transaction
+    # eg 200, 404 and so on for web requests but
+    # anything that translates into JSON works
+
+    Opbeat.flush_transactions # send transactions right away
+  end
+end
+```
+
+Everything that Opbeat knows will also be automatically traced, like `ActiveRecord`,
+`Redis` or `Net::HTTP`.
+
 ## Testing and development
 
 ```bash
