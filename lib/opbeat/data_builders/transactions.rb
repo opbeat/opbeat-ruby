@@ -68,7 +68,7 @@ module Opbeat
           start_time: [trace.relative_start],
           kind: trace.kind,
           timestamp: trace.timestamp,
-          parents: trace.parents || [],
+          parents: trace.parents && trace.parents.map(&:signature) || [],
           extra: trace.extra
         }
       end

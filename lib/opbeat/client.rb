@@ -136,9 +136,10 @@ module Opbeat
     def submit_transaction transaction
       ensure_worker_running
 
-      if config.environment == 'development'
-        debug { Util::Inspector.new.transaction transaction, include_parents: true }
-      end
+      # if config.environment == 'development'
+      #   debug { Util::Inspector.new.transaction transaction, include_parents: true }
+      #   # debug { JSON.pretty_generate DataBuilders::Transactions.new(config).build [transaction] }
+      # end
 
       @pending_transactions << transaction
 
@@ -152,7 +153,9 @@ module Opbeat
 
       path = '/transactions/'
       data = DataBuilders::Transactions.new(config).build(@pending_transactions)
+
       # debug { JSON.pretty_generate data }
+
       enqueue Worker::PostRequest.new(path, data)
       @last_sent_transactions = Time.now
       @pending_transactions = []

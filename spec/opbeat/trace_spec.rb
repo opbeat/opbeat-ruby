@@ -13,14 +13,16 @@ module Opbeat
     describe "#start" do
       it "has a relative and absolute start time with a transaction" do
         transaction = Transaction.new(nil, 'Test')
-        travel 0.1
-        trace = Trace.new(transaction, 'test').start
+        travel 0.4
+        trace = transaction.trace 'test1' do
+          travel 0.1
+          transaction.trace 'test' do |t|
+            travel 0.1
+            t
+          end
+        end
 
         expect(trace.relative_start.round 2).to eq 100.0
-      end
-      it "raises argument error when relative_start can't be calculated" do
-        trace = Trace.new nil, 'test'
-        expect { trace.start }.to raise_error(ArgumentError)
       end
     end
 

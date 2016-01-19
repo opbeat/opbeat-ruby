@@ -14,17 +14,17 @@ module Opbeat
     end
 
     attr_accessor :signature, :kind, :parents, :extra
-    attr_reader :transaction, :timestamp, :duration, :relative_start
+    attr_reader :transaction, :timestamp, :duration, :relative_start, :start_time
 
-    def start transaction_start = nil
-      transaction_start ||= @transaction && @transaction.start
+    def start relative_to = nil
+      if parents.any?
+        relative_to = parents.last.start_time
+      else
+        relative_to = transaction.start
+      end unless relative_to
 
-      unless transaction_start
-        raise ArgumentError, "No transaction nor transaction_start set for trace"
-      end
-
+      @relative_start = (Time.now.to_f - relative_to) * 1000
       @start_time = Time.now.to_f
-      @relative_start = (@start_time - transaction_start) * 1000.0
 
       self
     end

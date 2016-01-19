@@ -14,7 +14,7 @@ module Opbeat
       @timestamp = Util.nearest_minute.to_i
       @start = Time.now.to_f
 
-      @root_trace = Trace.new(self, ROOT_TRACE_NAME, ROOT_TRACE_NAME, []).start(@start)
+      @root_trace = Trace.new(self, ROOT_TRACE_NAME, ROOT_TRACE_NAME, []).start
       @traces = [@root_trace]
 
       @notifications = []
@@ -51,9 +51,12 @@ module Opbeat
     end
 
     def trace signature, kind = nil, parents = nil, extra = nil, &block
-      trace = Trace.new self, signature, kind, parent_stack, extra
+      parents = running_traces
+
+      trace = Trace.new self, signature, kind, parents, extra
+      trace.start(parents.last ? parents.last.start_time : transaction.start)
+
       traces << trace
-      trace.start
 
       return trace unless block_given?
 
@@ -66,10 +69,20 @@ module Opbeat
       result
     end
 
-    private
+    def running_traces
+      traces.select(&:running?)
+    end
 
-    def parent_stack
-      traces.select(&:running?).map(&:signature)
+    def running_trace_leaf
+      traces.reverse.find(&:running?)
+    end
+
+    def inspect
+      info = %w{endpoint kind result duration timestamp start}
+      <<-TEXT
+<Transaction #{info.map { |m| "#{m}:#{send(m).inspect}" }.join(' ')}>
+  #{traces.map(&:inspect).join("\n  ")}"
+      TEXT
     end
 
   end

@@ -50,6 +50,36 @@ module Opbeat
       end
     end
 
+    describe "#running_traces" do
+      it "returns running traces" do
+        transaction = Transaction.new nil, 'Test'
+
+        transaction.trace 'test' do
+          travel 0.1
+        end
+
+        running_trace = transaction.trace 'test2'
+        travel 0.1
+
+        expect(transaction.running_traces).to eq [transaction.root_trace, running_trace]
+      end
+    end
+
+    describe "#running_trace_leaf" do
+      it "returns the last, running trace" do
+        transaction = Transaction.new nil, 'Test'
+
+        transaction.trace 'test' do
+          travel 0.1
+        end
+
+        running_trace = transaction.trace 'test2'
+        travel 0.1
+
+        expect(transaction.running_trace_leaf).to eq running_trace
+      end
+    end
+
     describe "#trace" do
       subject do
         transaction = Transaction.new nil, 'Test'
@@ -66,7 +96,7 @@ module Opbeat
         expect(subject.traces.length).to be 2
       end
       it "has root as a parent" do
-        expect(subject.traces.last.parents).to eq [subject.traces.first.signature]
+        expect(subject.traces.last.parents).to eq [subject.traces.first]
       end
       it "has a duration" do
         expect(subject.traces.last.duration.round 4).to eq 100.0

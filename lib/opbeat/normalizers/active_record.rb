@@ -23,6 +23,10 @@ module Opbeat
             payload[:name] ||               # Users load
             "SQL".freeze
 
+          if signature == 'SELECT FROM "schema_migrations"'
+            return :skip
+          end
+
           [signature, @kind, { sql: payload[:sql] }]
         end
 

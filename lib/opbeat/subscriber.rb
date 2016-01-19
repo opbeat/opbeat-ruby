@@ -38,13 +38,11 @@ module Opbeat
 
       normalized = @normalizers.normalize(transaction, name, payload)
 
-      trace = nil
-
       unless normalized == :skip
         sig, kind, extra = normalized
 
-        trace = Trace.new(transaction, sig, kind, parents_for(transaction), extra)
-        trace.start(transaction.start)
+        trace = Trace.new(transaction, sig, kind, transaction.running_traces, extra)
+        trace.start
 
         transaction.traces << trace
       end
@@ -66,10 +64,6 @@ module Opbeat
     end
 
     private
-
-    def parents_for transaction
-      transaction.traces.select(&:running?).map(&:signature)
-    end
 
     def actions_regex
       @actions_regex ||= Regexp.new(

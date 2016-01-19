@@ -19,26 +19,22 @@ module Opbeat
         w = @config[:width].to_f
         f = w / transaction.duration
 
-        traces = transaction.traces.dup.sort_by do |trace|
-          trace.relative_start
-        end
+        traces = transaction.traces
 
-        # traces.shift # root
-
-        traces = traces.map do |trace|
-          descriptions = ["#{trace.signature} - #{trace.kind}"[0...w]]
+        traces = traces.reduce(Struct.new(:lines, :indent).new([], 0)) do |state, trace|
+          descriptions = [
+            "#{trace.signature} - #{trace.kind}",
+            "transaction:#{trace.transaction.endpoint}"
+          ]
 
           if opts[:include_parents]
-            parents_sig = "parents:#{trace.parents.join(',')[0...w]}"
-            descriptions << parents_sig
+            descriptions << "parents:#{trace.parents.map(&:signature).join(',')}"
           end
 
-          descriptions << "transaction:#{trace.transaction.endpoint}"
+          indent = state.indent + (trace.relative_start * f).to_i
 
-          indent = (trace.relative_start * f).to_i
-
-          longest_desc = descriptions.map(&:length).max
-          desc_indent = [[indent, w - longest_desc].min, 0].max
+          longest_desc_length = descriptions.map(&:length).max
+          desc_indent = [[indent, w - longest_desc_length].min, 0].max
 
           lines = descriptions.map do |desc|
             "#{SPACE * desc_indent}#{desc}"
@@ -51,8 +47,10 @@ module Opbeat
             lines << "#{SPACE * indent}UNFINISHED"
           end
 
-          lines
-        end.join(NEWLINE)
+          state.indent = indent
+          state.lines << lines.join("\n")
+          state
+        end.lines.join("\n")
 
         <<-STR.gsub(/^\s{8}/, '')
         \n#{"=" * (w.to_i)}
@@ -60,6 +58,10 @@ module Opbeat
         +#{"-" * (w.to_i - 2)}+
         #{traces}
         STR
+      rescue => e
+        puts e
+        puts e.backtrace.join("\n")
+        transaction.inspect
       end
 
     end
