@@ -1,13 +1,6 @@
 require 'spec_helper'
 
-begin
-  require 'mock_redis'
-  enabled = true
-rescue LoadError
-  enabled = false
-end
-
-if enabled
+if defined?(Redis)
   RSpec.describe "Redis integration", start_without_worker: true do
 
     let(:redis) { Redis.new }

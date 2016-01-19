@@ -12,9 +12,8 @@ if defined? Resque
   RSpec.describe 'Resque integration', start_without_worker: true do
 
     before do
-      # mocking redis is a bit much, but sadly necessary
-      require 'mock_redis'
-      Resque.redis = MockRedis.new
+      # using fakeredis
+      Resque.redis = Redis.new
 
       require 'resque/failure/multiple'
       Resque::Failure::Multiple.classes = [Opbeat::Integration::Resque]

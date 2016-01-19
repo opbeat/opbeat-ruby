@@ -14,9 +14,11 @@ gem 'simplecov'
 # external libs
 
 unless RUBY_VERSION.to_i <= 1
+  gem 'redis'
+  gem 'fakeredis'
+
   gem 'sidekiq', require: false
   gem 'delayed_job', require: false
-  gem 'mock_redis', require: false
   gem 'resque', require: false
 end
 
