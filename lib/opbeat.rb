@@ -44,7 +44,8 @@ module Opbeat
   # @return [Transaction] Unless block given
   def self.transaction endpoint, kind = nil, result = nil, &block
     unless client
-      return yield if block_given? else nil
+      return yield if block_given?
+      return nil
     end
 
     client.transaction endpoint, kind, result, &block
@@ -60,7 +61,8 @@ module Opbeat
   # @return [Trace] Unless block given
   def self.trace signature, kind = nil, parents = nil, extra = nil, &block
     unless client
-      return yield if block_given? else nil
+      return yield if block_given?
+      return nil
     end
 
     client.trace signature, kind, parents, extra, &block
@@ -68,7 +70,8 @@ module Opbeat
 
   def self.flush_transactions
     unless client
-      return yield if block_given? else nil
+      return yield if block_given?
+      return nil
     end
 
     client.flush_transactions
@@ -82,7 +85,8 @@ module Opbeat
   # @return [Net::HTTPResponse]
   def self.report exception, opts = {}
     unless client
-      return yield if block_given? else nil
+      return yield if block_given?
+      return nil
     end
 
     client.report exception, opts
@@ -95,7 +99,8 @@ module Opbeat
   # @return [Net::HTTPResponse]
   def self.report_message message, opts = {}
     unless client
-      return yield if block_given? else nil
+      return yield if block_given?
+      return nil
     end
 
     client.report_message message, opts
@@ -105,7 +110,8 @@ module Opbeat
   #
   def self.capture &block
     unless client
-      return yield if block_given? else nil
+      return yield if block_given?
+      return nil
     end
 
     client.capture(&block)
@@ -119,7 +125,8 @@ module Opbeat
   # @return [Net::HTTPResponse]
   def self.release rel, opts = {}
     unless client
-      return yield if block_given? else nil
+      return yield if block_given?
+      return nil
     end
 
     client.release rel, opts
