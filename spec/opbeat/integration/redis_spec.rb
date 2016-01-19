@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'redis'
+require 'mock_redis'
 
 RSpec.describe "Redis integration", start_without_worker: true do
 
