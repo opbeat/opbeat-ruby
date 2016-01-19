@@ -88,6 +88,19 @@ module Opbeat
     client.report exception, opts
   end
 
+  # Send an exception to Opbeat
+  #
+  # @param message [String]
+  # @param opts [Hash]
+  # @return [Net::HTTPResponse]
+  def self.report_message message, opts = {}
+    unless client
+      return yield if block_given? else nil
+    end
+
+    client.report_message message, opts
+  end
+
   # Captures any exceptions raised inside the block
   #
   def self.capture &block

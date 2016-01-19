@@ -138,7 +138,7 @@ module Opbeat
 
       # if config.environment == 'development'
       #   debug { Util::Inspector.new.transaction transaction, include_parents: true }
-      #   # debug { JSON.pretty_generate DataBuilders::Transactions.new(config).build [transaction] }
+      #   debug { JSON.pretty_generate DataBuilders::Transactions.new(config).build [transaction] }
       # end
 
       @pending_transactions << transaction
@@ -167,7 +167,6 @@ module Opbeat
 
     def report exception, opts = {}
       return if config.disable_errors
-
       return unless exception
 
       unless exception.backtrace
@@ -175,6 +174,14 @@ module Opbeat
       end
 
       error_message = ErrorMessage.from_exception(config, exception, opts)
+      data = DataBuilders::Error.new(config).build error_message
+      enqueue Worker::PostRequest.new('/errors/', data)
+    end
+
+    def report_message message, opts = {}
+      return if config.disable_errors
+
+      error_message = ErrorMessage.new(config, message, opts)
       data = DataBuilders::Error.new(config).build error_message
       enqueue Worker::PostRequest.new('/errors/', data)
     end

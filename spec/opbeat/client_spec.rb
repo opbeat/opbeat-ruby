@@ -118,6 +118,15 @@ module Opbeat
         end
       end
 
+      describe "#report_message" do
+        it "builds and posts an exception" do
+          subject.report_message "Massage message"
+
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop).to be_a Worker::PostRequest
+        end
+      end
+
       describe "#capture" do
         it "captures exceptions and sends them off then raises them again" do
           exception = Exception.new("BOOM")
