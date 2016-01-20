@@ -54,7 +54,7 @@ module Opbeat
       parents = running_traces
 
       trace = Trace.new self, signature, kind, parents, extra
-      trace.start(parents.last ? parents.last.start_time : transaction.start)
+      trace.start(parents.last ? parents.last.start_time : start)
 
       traces << trace
 
