@@ -136,10 +136,9 @@ module Opbeat
     def submit_transaction transaction
       ensure_worker_running
 
-      # if config.environment == 'development'
-      #   debug { Util::Inspector.new.transaction transaction, include_parents: true }
-      #   debug { JSON.pretty_generate DataBuilders::Transactions.new(config).build [transaction] }
-      # end
+      if config.debug_traces
+        debug { Util::Inspector.new.transaction transaction, include_parents: true }
+      end
 
       @pending_transactions << transaction
 

@@ -20,6 +20,8 @@ module Opbeat
       disable_performance: false,
       disable_errors: false,
 
+      debug_traces: false,
+
       # for tests
       disable_worker: false
     }.freeze
@@ -44,6 +46,8 @@ module Opbeat
 
     attr_accessor :disable_performance
     attr_accessor :disable_errors
+
+    attr_accessor :debug_traces
 
     attr_accessor :disable_worker
 
