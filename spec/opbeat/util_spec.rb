@@ -12,7 +12,7 @@ module Opbeat
 
     describe "#ms", mock_time: true do
       it "returns current ms since unix epoch" do
-        expect(Util.ms).to eq 694220400000000000
+        expect(Util.nanos).to eq 694220400000000000
       end
     end
 

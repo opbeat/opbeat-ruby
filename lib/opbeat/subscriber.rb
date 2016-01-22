@@ -26,17 +26,19 @@ module Opbeat
     # AS::Notifications API
 
     class Notification
-      def initialize name, trace
-        @name = name
+      def initialize id, trace
+        @id = id
         @trace = trace
       end
-      attr_reader :name, :trace
+      attr_reader :id, :trace
     end
 
     def start name, id, payload
       return unless transaction = @client.current_transaction
 
       normalized = @normalizers.normalize(transaction, name, payload)
+
+      trace = nil
 
       unless normalized == :skip
         sig, kind, extra = normalized
@@ -47,15 +49,15 @@ module Opbeat
         transaction.traces << trace
       end
 
-      transaction.notifications << name
+      transaction.notifications << Notification.new(id, trace)
     end
 
     def finish name, id, payload
       return unless transaction = @client.current_transaction
 
       while notification = transaction.notifications.pop
-        if notification == name
-          if trace = transaction.traces.select(&:running?).last
+        if notification.id == id
+          if trace = notification.trace
             trace.done
           end
           return

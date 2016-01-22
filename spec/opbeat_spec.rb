@@ -18,7 +18,7 @@ RSpec.describe Opbeat do
     it { should be_started }
 
     it { should delegate :transaction, to: Opbeat::Client.inst, args: ['Test', nil, nil] }
-    it { should delegate :trace, to: Opbeat::Client.inst, args: ['test', nil, nil, {}] }
+    it { should delegate :trace, to: Opbeat::Client.inst, args: ['test', nil, {}] }
     it { should delegate :report, to: Opbeat::Client.inst, args: [Exception.new, nil] }
     it { should delegate :report_message, to: Opbeat::Client.inst, args: ["My message", nil] }
     it { should delegate :release, to: Opbeat::Client.inst, args: [{}, {}] }
@@ -38,10 +38,10 @@ RSpec.describe Opbeat do
             end
             travel 0.1
           end
-        end
+        end.done(true)
 
         expect(transaction).to be_done
-        expect(transaction.duration).to eq 500
+        expect(transaction.duration).to eq 500_000_000
       end
     end
   end

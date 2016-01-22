@@ -12,16 +12,17 @@ module Opbeat
       @result = result
 
       @timestamp = Util.nearest_minute.to_i
-      @start = Time.now.to_f
+      @start_time = Util.nanos
 
-      @root_trace = Trace.new(self, ROOT_TRACE_NAME, ROOT_TRACE_NAME, []).start
-      @traces = [@root_trace]
+      @traces = []
+      @root_trace = Trace.new(self, ROOT_TRACE_NAME, ROOT_TRACE_NAME).start
+      @traces << @root_trace
 
       @notifications = []
     end
 
     attr_accessor :endpoint, :kind, :result, :duration
-    attr_reader :timestamp, :start, :traces, :notifications, :root_trace
+    attr_reader :timestamp, :start_time, :traces, :notifications, :root_trace
 
     def release
       @client.current_transaction = nil
@@ -30,7 +31,7 @@ module Opbeat
     def done result = nil
       @result = result
 
-      @root_trace.done
+      @root_trace.done Util.nanos
       @duration = @root_trace.duration
 
       self
@@ -50,12 +51,8 @@ module Opbeat
       self
     end
 
-    def trace signature, kind = nil, parents = nil, extra = nil, &block
-      parents = running_traces
-
-      trace = Trace.new self, signature, kind, parents, extra
-      trace.start(parents.last ? parents.last.start_time : start)
-
+    def trace signature, kind = nil, extra = nil, &block
+      trace = Trace.new(self, signature, kind, running_traces, extra).start
       traces << trace
 
       return trace unless block_given?
@@ -73,12 +70,8 @@ module Opbeat
       traces.select(&:running?)
     end
 
-    def running_trace_leaf
-      traces.reverse.find(&:running?)
-    end
-
     def inspect
-      info = %w{endpoint kind result duration timestamp start}
+      info = %w{endpoint kind result duration timestamp start_time}
       <<-TEXT
 <Transaction #{info.map { |m| "#{m}:#{send(m).inspect}" }.join(' ')}>
   #{traces.map(&:inspect).join("\n  ")}"

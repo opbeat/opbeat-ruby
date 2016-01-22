@@ -11,6 +11,7 @@ describe 'Rails integration' do
     TinderButForHotDogs.initialize!
     TinderButForHotDogs.routes.draw do
       get 'error', to: 'users#error'
+      get 'json', to: 'users#other'
       root to: 'users#index'
     end
   end
@@ -33,6 +34,11 @@ describe 'Rails integration' do
     class UsersController < ActionController::Base
       def index
         render text: 'HOT DOGS!'
+      end
+
+      def other
+        json = Opbeat.trace('JSON.dump') { sleep 0.1; { result: :ok } }
+        render json: json
       end
 
       def error

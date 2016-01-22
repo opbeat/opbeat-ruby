@@ -8,7 +8,7 @@ module Opbeat
           if data[:transactions][key].nil?
             data[:transactions][key] = build_transaction(transaction)
           else
-            data[:transactions][key][:durations] << transaction.duration
+            data[:transactions][key][:durations] << ms(transaction.duration)
           end
 
           combine_traces transaction.traces, data[:traces]
@@ -44,8 +44,11 @@ module Opbeat
           if into[key].nil?
             into[key] = build_trace(trace)
           else
-            into[key][:durations] << [trace.duration, trace.transaction.duration]
-            into[key][:start_time] << trace.relative_start
+            into[key][:durations] << [
+              ms(trace.duration),
+              ms(trace.transaction.duration)
+            ]
+            into[key][:start_time] << ms(trace.relative_start)
           end
         end
       end
@@ -56,7 +59,7 @@ module Opbeat
           result: transaction.result,
           kind: transaction.kind,
           timestamp: transaction.timestamp,
-          durations: [transaction.duration]
+          durations: [ms(transaction.duration)]
         }
       end
 
@@ -64,13 +67,20 @@ module Opbeat
         {
           transaction: trace.transaction.endpoint,
           signature: trace.signature,
-          durations: [[trace.duration, trace.transaction.duration]],
-          start_time: [trace.relative_start],
+          durations: [[
+            ms(trace.duration),
+            ms(trace.transaction.duration)
+          ]],
+          start_time: [ms(trace.relative_start)],
           kind: trace.kind,
           timestamp: trace.timestamp,
           parents: trace.parents && trace.parents.map(&:signature) || [],
           extra: trace.extra
         }
+      end
+
+      def ms nanos
+        nanos.to_f / 1_000_000
       end
     end
   end

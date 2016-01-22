@@ -7,12 +7,8 @@ module Opbeat
     def call env
       begin
         transaction = Opbeat.transaction "Rack", "app.rack.request"
-
         resp = @app.call env
-
-        if transaction
-          resp[2] = BodyProxy.new(resp[2]) { transaction.submit(resp[0]) }
-        end
+        resp[2] = BodyProxy.new(resp[2]) { transaction.submit(resp[0]) } if transaction
       rescue Error
         raise # Don't report Opbeat errors
       rescue Exception => e

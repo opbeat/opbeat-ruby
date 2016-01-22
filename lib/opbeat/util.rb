@@ -6,7 +6,7 @@ module Opbeat
       now - now.to_i % 60
     end
 
-    def self.ms
+    def self.nanos
       now = Time.now
       now.to_i * 1_000_000_000 + now.usec * 1_000
     end

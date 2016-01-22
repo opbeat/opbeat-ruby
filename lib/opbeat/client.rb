@@ -105,15 +105,16 @@ module Opbeat
       end
 
       transaction = Transaction.new self, endpoint, kind, result
-      self.current_transaction = transaction
 
+      self.current_transaction = transaction
       return transaction unless block_given?
 
       begin
         yield transaction
+
       ensure
+        self.current_transaction = nil
         transaction.done
-        transaction.release
       end
 
       transaction

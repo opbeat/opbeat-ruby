@@ -8,8 +8,8 @@ module Opbeat
       it "has a root trace, timestamp and start time" do
         transaction = Transaction.new nil, 'Test'
         expect(transaction.traces.length).to be 1
-        expect(transaction.timestamp).to eq Time.new(1992, 1, 1).to_i
-        expect(transaction.start).to eq Time.now.to_f
+        expect(transaction.timestamp).to eq 694220400
+        expect(transaction.start_time).to eq 694220400000000000
       end
     end
 
@@ -31,7 +31,7 @@ module Opbeat
 
         expect(transaction.result).to be 200
         expect(transaction.traces.first).to be_done
-        expect(transaction.duration.round 4).to eq 100.0
+        expect(transaction.duration).to eq 100_000_000
       end
     end
 
@@ -65,21 +65,6 @@ module Opbeat
       end
     end
 
-    describe "#running_trace_leaf" do
-      it "returns the last, running trace" do
-        transaction = Transaction.new nil, 'Test'
-
-        transaction.trace 'test' do
-          travel 0.1
-        end
-
-        running_trace = transaction.trace 'test2'
-        travel 0.1
-
-        expect(transaction.running_trace_leaf).to eq running_trace
-      end
-    end
-
     describe "#trace" do
       subject do
         transaction = Transaction.new nil, 'Test'
@@ -99,13 +84,13 @@ module Opbeat
         expect(subject.traces.last.parents).to eq [subject.traces.first]
       end
       it "has a duration" do
-        expect(subject.traces.last.duration.round 4).to eq 100.0
+        expect(subject.traces.last.duration).to eq 100_000_000
       end
       it "has a relative start" do
-        expect(subject.traces.last.relative_start.round 2).to eq 100.0
+        expect(subject.traces.last.relative_start).to eq 100_000_000
       end
       it "has a total duration" do
-        expect(subject.duration.round 4).to eq 200.0
+        expect(subject.duration).to eq 200_000_000
       end
     end
 

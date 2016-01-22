@@ -55,17 +55,16 @@ module Opbeat
   #
   # @param signature [String] A description of the trace, eq `SELECT FROM "users"`
   # @param kind [String] The kind of trace, eq `db.mysql2.query`
-  # @param parents [Array<String>] Signatures of parent traces
   # @param extra [Hash] Extra information about the trace
   # @yield [Trace] Optional block encapsulating trace
   # @return [Trace] Unless block given
-  def self.trace signature, kind = nil, parents = nil, extra = nil, &block
+  def self.trace signature, kind = nil, extra = nil, &block
     unless client
       return yield if block_given?
       return nil
     end
 
-    client.trace signature, kind, parents, extra, &block
+    client.trace signature, kind, extra, &block
   end
 
   def self.flush_transactions

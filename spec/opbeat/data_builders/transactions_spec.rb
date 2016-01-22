@@ -33,13 +33,14 @@ module Opbeat
           data = subject
           expect(data[:transactions].length).to be 2
           expect(data[:transactions].map { |t| t[:result] }).to eq [200, 500]
+          expect(data[:transactions].map { |t| t[:durations] }.flatten).to eq [100.0, 100.0, 100.0, 300.0]
         end
 
         it "combines traces" do
           data = subject
           expect(data[:traces].length). to be 2
           expect(data[:traces].first[:durations].length).to be 4
-          expect(data[:traces].last[:durations].flatten.map(&:round)).to eq [100, 300, 100, 300]
+          expect(data[:traces].last[:durations].flatten).to eq [100.0, 300.0, 100.0, 300.0]
           expect(data[:traces].last[:start_time].round).to eq 150
         end
       end

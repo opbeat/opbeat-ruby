@@ -14,15 +14,16 @@ module Opbeat
       it "has a relative and absolute start time with a transaction" do
         transaction = Transaction.new(nil, 'Test')
         travel 0.4
-        trace = transaction.trace 'test1' do
+        trace = transaction.trace 'test-1' do
           travel 0.1
-          transaction.trace 'test' do |t|
+          transaction.trace 'test-2' do |t|
             travel 0.1
             t
           end
         end
 
-        expect(trace.relative_start.round 2).to eq 100.0
+        expect(trace.signature).to eq 'test-2'
+        expect(trace.relative_start).to eq 100_000_000
       end
     end
 
@@ -33,7 +34,7 @@ module Opbeat
         travel 0.1
         trace.done
 
-        expect(trace.duration.round 4).to eq 100.0
+        expect(trace.duration).to eq 100_000_000
         expect(trace).to be_done
       end
     end

@@ -29,7 +29,7 @@ module Opbeat
               signature = "#{method} #{host}".freeze
               kind = "ext.net_http.#{method}".freeze
 
-              Opbeat.trace signature, kind, nil, extra do
+              Opbeat.trace signature, kind, extra do
                 request_without_opb(req, body, &block)
               end
             end
