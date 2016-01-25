@@ -30,7 +30,7 @@ module Opbeat
     describe "#done" do
       it "sets duration" do
         transaction = Transaction.new nil, 'Test'
-        trace = Trace.new(transaction, 'test').start
+        trace = Trace.new(transaction, 'test').start transaction.start_time
         travel 0.1
         trace.done
 

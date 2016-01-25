@@ -44,9 +44,11 @@ module Opbeat
         sig, kind, extra = normalized
 
         trace = Trace.new(transaction, sig, kind, transaction.running_traces, extra)
-        trace.start
+        offset = transaction.current_offset
 
         transaction.traces << trace
+
+        trace.start offset
       end
 
       transaction.notifications << Notification.new(id, trace)

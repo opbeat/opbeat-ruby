@@ -12,13 +12,13 @@ module Opbeat
       @result = result
 
       @timestamp = Util.nearest_minute.to_i
-      @start_time = Util.nanos
 
-      @traces = []
-      @root_trace = Trace.new(self, ROOT_TRACE_NAME, ROOT_TRACE_NAME).start
-      @traces << @root_trace
-
+      @root_trace = Trace.new(self, ROOT_TRACE_NAME, ROOT_TRACE_NAME)
+      @traces = [@root_trace]
       @notifications = []
+
+      @start_time = Util.nanos
+      @root_trace.start @start_time
     end
 
     attr_accessor :endpoint, :kind, :result, :duration
@@ -52,8 +52,13 @@ module Opbeat
     end
 
     def trace signature, kind = nil, extra = nil, &block
-      trace = Trace.new(self, signature, kind, running_traces, extra).start
+      trace = Trace.new(self, signature, kind, running_traces, extra)
+
+      rel_time = current_offset
+
       traces << trace
+
+      trace.start rel_time
 
       return trace unless block_given?
 
@@ -68,6 +73,18 @@ module Opbeat
 
     def running_traces
       traces.select(&:running?)
+    end
+
+    def current_trace
+      traces.reverse.find(&:running?)
+    end
+
+    def current_offset
+      if curr = current_trace
+        return curr.start_time
+      end
+
+      start_time
     end
 
     def inspect

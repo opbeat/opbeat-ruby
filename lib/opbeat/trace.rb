@@ -18,14 +18,9 @@ module Opbeat
     attr_accessor :signature, :kind, :parents, :extra
     attr_reader :transaction, :timestamp, :duration, :relative_start, :start_time
 
-    def start
+    def start relative_to
       @start_time = Util.nanos
-
-      if parent = transaction.running_traces.last
-        @relative_start = start_time - parent.start_time
-      else
-        @relative_start = start_time - transaction.start_time
-      end
+      @relative_start = start_time - relative_to
 
       self
     end
