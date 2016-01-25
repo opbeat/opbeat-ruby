@@ -27,8 +27,6 @@ module Opbeat
 
         # preserve root
         root = reduced[:traces].shift
-        # remove parentless traces
-        reduced[:traces].delete_if { |t| t[:parents].empty? }
         # re-add root
         reduced[:traces].unshift root
 
