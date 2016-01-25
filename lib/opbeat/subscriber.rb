@@ -1,3 +1,4 @@
+require 'active_support/notifications'
 require 'opbeat/normalizers'
 
 module Opbeat
