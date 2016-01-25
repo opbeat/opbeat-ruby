@@ -232,12 +232,11 @@ module Opbeat
     def start_worker
       return if worker_running?
 
-      info "Starting worker in thread"
-
       if config.disable_worker
-        info "Worker disabled"
         return
       end
+
+      info "Starting worker in thread"
 
       @worker_thread = Thread.new do
         begin
