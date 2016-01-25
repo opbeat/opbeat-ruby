@@ -138,7 +138,9 @@ module Opbeat
       ensure_worker_running
 
       if config.debug_traces
-        debug { Util::Inspector.new.transaction transaction, include_parents: true }
+        unless transaction.endpoint == 'Rack'
+          debug { Util::Inspector.new.transaction transaction, include_parents: true }
+        end
       end
 
       @pending_transactions << transaction
