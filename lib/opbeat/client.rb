@@ -54,6 +54,11 @@ module Opbeat
       @http_client = HttpClient.new config
       @queue = Queue.new
 
+      @data_builders = Struct.new(:transactions, :error_message).new(
+        DataBuilders::Transactions.new(config),
+        DataBuilders::Error.new(config)
+      )
+
       unless config.disable_performance
         @transaction_info = TransactionInfo.new
         @subscriber = Subscriber.new config, self
@@ -153,12 +158,9 @@ module Opbeat
     def flush_transactions
       return if @pending_transactions.empty?
 
-      path = '/transactions/'
-      data = DataBuilders::Transactions.new(config).build(@pending_transactions)
+      data = @data_builders.transactions.build(@pending_transactions)
+      enqueue Worker::PostRequest.new('/transactions/', data)
 
-      # debug { JSON.pretty_generate data }
-
-      enqueue Worker::PostRequest.new(path, data)
       @last_sent_transactions = Time.now
       @pending_transactions = []
 
@@ -176,7 +178,7 @@ module Opbeat
       end
 
       error_message = ErrorMessage.from_exception(config, exception, opts)
-      data = DataBuilders::Error.new(config).build error_message
+      data = @data_builders.error_message.build error_message
       enqueue Worker::PostRequest.new('/errors/', data)
     end
 
@@ -184,7 +186,7 @@ module Opbeat
       return if config.disable_errors
 
       error_message = ErrorMessage.new(config, message, opts)
-      data = DataBuilders::Error.new(config).build error_message
+      data = @data_builders.error_message.build error_message
       enqueue Worker::PostRequest.new('/errors/', data)
     end
 
