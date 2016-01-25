@@ -15,4 +15,6 @@ Gem::Specification.new do |gem|
   gem.files            = `git ls-files -z`.split("\x0")
   gem.require_paths    = ["lib"]
   gem.extra_rdoc_files = ["README.md", "LICENSE"]
+
+  gem.add_dependency('activesupport', '>= 3.0.0')
 end
