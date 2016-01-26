@@ -5,17 +5,17 @@ module Opbeat
 
     let(:transaction) do
       Opbeat.transaction 'Test' do |transaction|
-        travel 0.01
+        travel 10
         Opbeat.trace('test 1', 'trace.test') do
-          travel 0.1
-          Opbeat.trace('test 2', 'trace.test') { travel 0.15 }
-          travel 0.05
+          travel 100
+          Opbeat.trace('test 2', 'trace.test') { travel 150 }
+          travel 50
         end
-        travel 0.05
+        travel 50
         Opbeat.trace('test 3', 'trace.test') do
-          travel 0.1
+          travel 100
         end
-        travel 0.001
+        travel 1
 
         transaction
       end

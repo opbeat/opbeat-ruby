@@ -8,8 +8,8 @@ module Opbeat
       it "has a root trace, timestamp and start time" do
         transaction = Transaction.new nil, 'Test'
         expect(transaction.traces.length).to be 1
-        expect(transaction.timestamp).to eq 694220400
-        expect(transaction.start_time).to eq 694220400000000000
+        expect(transaction.timestamp).to eq 694224000
+        expect(transaction.start_time).to eq 694224000000000000
       end
     end
 
@@ -26,7 +26,7 @@ module Opbeat
       it "it sets result, durations and ends root trace" do
         transaction = Transaction.new nil, 'Test'
 
-        travel 0.1
+        travel 100
         transaction.done(200)
 
         expect(transaction.result).to be 200
@@ -40,7 +40,7 @@ module Opbeat
         client = double('client', submit_transaction: true, :current_transaction= => true)
         transaction = Transaction.new client, 'Test'
 
-        travel 0.1
+        travel 100
         transaction.submit 200
 
         expect(transaction.result).to be 200
@@ -55,11 +55,11 @@ module Opbeat
         transaction = Transaction.new nil, 'Test'
 
         transaction.trace 'test' do
-          travel 0.1
+          travel 100
         end
 
         running_trace = transaction.trace 'test2'
-        travel 0.1
+        travel 100
 
         expect(transaction.running_traces).to eq [transaction.root_trace, running_trace]
       end
@@ -69,10 +69,10 @@ module Opbeat
       subject do
         transaction = Transaction.new nil, 'Test'
 
-        travel 0.1
+        travel 100
 
         transaction.trace 'test' do
-          travel 0.1
+          travel 100
         end
 
         transaction.done

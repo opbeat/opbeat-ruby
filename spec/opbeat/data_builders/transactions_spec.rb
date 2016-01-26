@@ -9,18 +9,18 @@ module Opbeat
           transaction1 = Transaction.new(nil, 'endpoint', 'special.kind')
           transaction2 = Transaction.new(nil, 'endpoint', 'special.kind')
           transaction3 = Transaction.new(nil, 'endpoint', 'special.kind')
-          travel 0.1
+          travel 100
           transaction1.done 200
           transaction2.done 200
           transaction3.done 500
 
           transaction4 = Opbeat.transaction('endpoint', 'special.kind') do
-            travel 0.1
+            travel 100
             Opbeat.trace 'things' do
-              travel 0.1
+              travel 100
             end
             Opbeat.trace 'things' do
-              travel 0.1
+              travel 100
             end
           end.done(500)
 

@@ -65,11 +65,11 @@ module Opbeat
         it "adds a stack of parents", mock_time: true do
           transaction = Opbeat.transaction 'Rack' do
             subject.start(*message_args)
-            travel 0.1
+            travel 100
             Opbeat.trace('thing-1') do
-              travel 0.1
+              travel 100
             end
-            travel 0.1
+            travel 100
             subject.finish(*message_args)
           end.done(200)
 

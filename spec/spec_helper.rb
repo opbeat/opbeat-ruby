@@ -24,10 +24,10 @@ RSpec.configure do |config|
   end
 
   config.around :each, mock_time: true do |example|
-    @date = Time.local(1992, 1, 1, 0, 0, 0)
+    @date = Time.local(1992, 1, 1)
 
     def travel distance
-      Timecop.freeze(@date += distance.to_f)
+      Timecop.freeze(@date += distance / 1_000.0)
     end
 
     travel 0

@@ -27,16 +27,16 @@ RSpec.describe Opbeat do
     describe "a block example", mock_time: true do
       it "is done" do
         transaction = Opbeat.transaction 'Test' do
-          travel 0.1
+          travel 100
           Opbeat.trace 'test1' do
-            travel 0.1
+            travel 100
             Opbeat.trace 'test1-1' do
-              travel 0.1
+              travel 100
             end
             Opbeat.trace 'test1-2' do
-              travel 0.1
+              travel 100
             end
-            travel 0.1
+            travel 100
           end
         end.done(true)
 
