@@ -47,6 +47,7 @@ module Opbeat
           raise Error.new("Error from Opbeat server (#{response.code}): #{response.body}")
         end
       rescue
+        debug { JSON.parse(body).inspect }
         @state.fail!
         raise
       end
