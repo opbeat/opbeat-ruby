@@ -25,7 +25,15 @@ module Opbeat
       use Opbeat::Middleware
 
       get '/' do
+        erb "I am an inline template!"
+      end
+
+      template :tmpl do
         "I am a template!"
+      end
+
+      get '/tmpl' do
+        erb :tmpl
       end
     end
 
@@ -38,6 +46,20 @@ module Opbeat
 
       transaction = Opbeat::Client.inst.pending_transactions.last
       expect(transaction.endpoint).to eq 'GET /'
+    end
+
+    it "traces templates" do
+      get '/tmpl'
+
+      transaction = Opbeat::Client.inst.pending_transactions.last
+      expect(transaction.traces.last.signature).to eq 'tmpl'
+    end
+
+    it "traces inline templates" do
+      get '/'
+
+      transaction = Opbeat::Client.inst.pending_transactions.last
+      expect(transaction.traces.last.signature).to eq 'Inline erb'
     end
 
   end
