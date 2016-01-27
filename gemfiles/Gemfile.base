@@ -16,6 +16,8 @@ gem 'simplecov'
 gem 'sinatra'
 gem 'redis'
 gem 'fakeredis'
+gem 'sqlite3'
+gem 'sequel'
 
 gem 'delayed_job', require: false
 gem 'resque', require: false
