@@ -14,6 +14,7 @@ require 'opbeat/injections'
 require 'opbeat/injections/net_http'
 require 'opbeat/injections/redis'
 require 'opbeat/injections/sinatra'
+require 'opbeat/injections/sequel'
 
 require 'opbeat/integration/delayed_job'
 require 'opbeat/integration/sidekiq'
