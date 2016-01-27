@@ -46,12 +46,14 @@ RSpec.configure do |config|
   config.around :each, start: true do |example|
     Opbeat.start! build_config
     example.call
+    Opbeat::Client.inst.current_transaction = nil
     Opbeat.stop!
   end
 
   config.around :each, start_without_worker: true do |example|
     Opbeat.start! build_config(disable_worker: true)
     example.call
+    Opbeat::Client.inst.current_transaction = nil
     Opbeat.stop!
   end
 end
