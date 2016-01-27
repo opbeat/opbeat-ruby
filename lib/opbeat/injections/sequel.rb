@@ -2,6 +2,8 @@ module Opbeat
   module Injections
     module Sequel
       class Injector
+        KIND = 'db.sequel.sql'.freeze
+
         def self.sql_parser
           @sql_parser ||= SqlSummarizer.new(nil)
         end
@@ -15,7 +17,7 @@ module Opbeat
             def log_yield sql, args = nil, &block
               log_yield_without_opb(sql, *args) do
                 sig = Opbeat::Injections::Sequel::Injector.sql_parser.signature_for(sql)
-                Opbeat.trace(sig, 'sql.sequel', sql: sql) do
+                Opbeat.trace(sig, KIND, sql: sql) do
                   block.call
                 end
               end
