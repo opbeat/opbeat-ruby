@@ -9,7 +9,7 @@
 Add the following to your `Gemfile`:
 
 ```ruby
-gem 'opbeat', git: 'https://github.com/opbeat/opbeat-ruby'
+gem 'opbeat', '~> 3.0'
 ```
 
 The Opbeat gem adhere to [Semantic
@@ -137,7 +137,7 @@ class MyWorker
   def perform
     Opbeat.transaction "MyWorker#perform", "worker.sidekiq" do
       User.find_each do |user|
-        Opbeat.trace 'run!' do 
+        Opbeat.trace 'run!' do
           user.sync_with_payment_provider!
         end
       end

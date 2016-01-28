@@ -4,3 +4,4 @@ Gemfile.lock
 opbeat*.gem
 .yardoc
 profile-*
+pkg
