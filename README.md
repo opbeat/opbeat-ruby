@@ -56,21 +56,21 @@ use Opbeat::Middleware
 
 Opbeat works with just the authentication configuration but of course there are other knobs to turn. For a complete list, see [configuration.rb](https://github.com/opbeat/opbeat-ruby/blob/master/lib/opbeat/configuration.rb).
 
-### Ignore specific exceptions
+#### Enable in development and other environments
+
+As a default Opbeat only runs in production. You can make it run in other environments by adding them to the `enabled_environments` whitelist.
+
+```ruby
+config.opbeat.enabled_environments += %w{development}
+```
+
+#### Ignore specific exceptions
 
 ```ruby
 config.opbeat.excluded_exceptions += %w{
   ActiveRecord::RecordNotFound
   ActionController::RoutingError
 }
-```
-
-### Enable in development and other environments
-
-As a default Opbeat only runs in production. You can make it run in other environments by adding them to the `enabled_environments` whitelist.
-
-```ruby
-config.opbeat.enabled_environments += %w{development}
 ```
 
 ### Sanitizing data
@@ -109,6 +109,25 @@ Resque::Failure.backend = Resque::Failure::Multiple
 
 It's easy to add performance tracking wherever you want using the `Opbeat` module.
 
+Basically you have to know about two concepts: `Transaction` and `Trace`.
+
+**Transactions** are a bundles of transactions. In a typical webapp every request is wrapped in a transaction. If you're instrumenting worker jobs, a single job run would be a transaction.
+
+**Traces** are spans of time that happen during a transaction. Like a call to the database, a render of a view or a HTTP request. Opbeat will automatically trace the libraries that it knows of and you can manually trace whatever else you'd like to.
+
+The basic api looks like this:
+
+```ruby
+Opbeat.transaction "Transaction identifier" do
+  data = Opbeat.trace "Preparation" do
+    prepare_data
+  end
+  Opbeat.trace "Description", "kind" do
+    perform_expensive_task data
+  end
+end.done(200)
+```
+
 Here, for example is how you could profile a Sidekiq worker job:
 
 ```ruby
@@ -132,8 +151,23 @@ class MyWorker
 end
 ```
 
-Everything that Opbeat knows will also be automatically traced, like `ActiveRecord`,
-`Redis` or `Net::HTTP`.
+If you are inside a web request, you are already inside a transaction so you only need to use trace:
+
+```ruby
+class UsersController < ApplicationController
+
+  def extend_profiles
+    users = User.all
+
+    Opbeat.trace "prepare users" do
+      users.each { |user| user.extend_profile! }
+    end
+
+    render text: 'ok'
+  end
+
+end
+```
 
 ## Testing and development
 
