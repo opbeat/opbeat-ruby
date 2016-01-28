@@ -112,14 +112,14 @@ module Opbeat
       def initialize(config)
         @config = config
         @retry_number = 0
-        @last_check = Time.now
+        @last_check = Time.now.utc
       end
 
       def should_try?
         return true if @status == :online
 
         interval = ([@retry_number, 6].min() ** 2) * @config.backoff_multiplier
-        return true if Time.now - @last_check > interval
+        return true if Time.now.utc - @last_check > interval
 
         false
       end
@@ -127,7 +127,7 @@ module Opbeat
       def fail!
         @status = :error
         @retry_number += 1
-        @last_check = Time.now
+        @last_check = Time.now.utc
       end
 
       def success!

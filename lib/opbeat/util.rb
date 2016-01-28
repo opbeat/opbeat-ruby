@@ -2,12 +2,12 @@ module Opbeat
   # @api private
   module Util
     def self.nearest_minute
-      now = Time.now
+      now = Time.now.utc
       now - now.to_i % 60
     end
 
     def self.nanos
-      now = Time.now
+      now = Time.now.utc
       now.to_i * 1_000_000_000 + now.usec * 1_000
     end
   end

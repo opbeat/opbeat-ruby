@@ -86,7 +86,7 @@ module Opbeat
 
         it "sends if it's long enough ago that we sent last" do
           transaction = Transaction.new(subject, 'test')
-          subject.instance_variable_set :@last_sent_transactions, Time.now - 61
+          subject.instance_variable_set :@last_sent_transactions, Time.now.utc - 61
 
           subject.submit_transaction transaction
 

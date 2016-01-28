@@ -65,7 +65,7 @@ module Opbeat
       end
 
       @pending_transactions = []
-      @last_sent_transactions = Time.now
+      @last_sent_transactions = Time.now.utc
     end
 
     attr_reader :config, :queue, :pending_transactions
@@ -161,7 +161,7 @@ module Opbeat
       data = @data_builders.transactions.build(@pending_transactions)
       enqueue Worker::PostRequest.new('/transactions/', data)
 
-      @last_sent_transactions = Time.now
+      @last_sent_transactions = Time.now.utc
       @pending_transactions = []
 
       true
@@ -276,7 +276,7 @@ module Opbeat
     def should_send_transactions?
       return true if config.transaction_post_interval.nil?
 
-      Time.now - @last_sent_transactions > config.transaction_post_interval
+      Time.now.utc - @last_sent_transactions > config.transaction_post_interval
     end
 
   end

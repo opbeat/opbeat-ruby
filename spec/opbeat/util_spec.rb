@@ -6,7 +6,7 @@ module Opbeat
     describe "#nearest_minute", mock_time: true do
       it "normalizes to nearest minute" do
         travel 125_000 # two minutes five secs
-        expect(Util.nearest_minute).to eq Time.new(1992, 1, 1, 0, 2, 0)
+        expect(Util.nearest_minute).to eq Time.utc(1992, 1, 1, 0, 2, 0)
       end
     end
 

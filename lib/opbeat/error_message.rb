@@ -17,7 +17,7 @@ module Opbeat
       @config = config
 
       @message = message
-      @timestamp = Time.now.to_i
+      @timestamp = Time.now.utc.to_i
       DEFAULTS.merge(attrs).each do |k,v|
         send(:"#{k}=", v)
       end

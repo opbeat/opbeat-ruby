@@ -6,7 +6,7 @@ module Opbeat
     describe "#initialize" do
       it "has a timestamp" do
         trace = Trace.new nil, 'test'
-        expect(trace.timestamp).to eq Time.now.to_i
+        expect(trace.timestamp).to eq Time.now.utc.to_i
       end
     end
 
