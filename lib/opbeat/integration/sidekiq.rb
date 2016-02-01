@@ -30,7 +30,7 @@ if defined? Sidekiq
         chain.add Opbeat::Integration::Sidekiq
       end
     else
-      config.error_handlers << lambda do |exception|
+      config.error_handlers << lambda do |exception, *|
         Opbeat.report exception
       end
     end
