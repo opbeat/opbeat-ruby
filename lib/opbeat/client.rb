@@ -252,7 +252,9 @@ module Opbeat
     def kill_worker
       return unless worker_running?
       @queue << Worker::StopMessage.new
-      @worker_thread.join 1
+      unless @worker_thread.join 5
+        error "Failed to wait for worker, not all messages sent"
+      end
       @worker_thread = nil
     end
 
