@@ -173,6 +173,8 @@ module Opbeat
       return if config.disable_errors
       return unless exception
 
+      ensure_worker_running
+
       unless exception.backtrace
         exception.set_backtrace caller
       end
