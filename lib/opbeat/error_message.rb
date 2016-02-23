@@ -65,6 +65,10 @@ module Opbeat
         error_message.user = User.from_rack_env config, env
       end
 
+      if extra = opts[:extra]
+        error_message.extra = extra
+      end
+
       error_message
     end
   end

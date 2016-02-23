@@ -71,6 +71,12 @@ module Opbeat
           expect(error.user).to be_a(ErrorMessage::User)
           expect(error.user.id).to be 1
         end
+
+        it "adds extra data to message" do
+          error = ErrorMessage.from_exception config, real_exception, extra: { "test" => 1 }
+
+          expect(error.extra).to eq("test" => 1)
+        end
       end
     end
 
