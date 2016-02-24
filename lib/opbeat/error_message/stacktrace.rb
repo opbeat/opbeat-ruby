@@ -11,7 +11,7 @@ module Opbeat
       def self.from config, exception
         return unless exception.backtrace
 
-        new(config, exception.backtrace.map do |line|
+        new(config, exception.backtrace.reverse.map do |line|
           Frame.from_line config, line
         end)
       end
