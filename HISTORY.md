@@ -1,3 +1,13 @@
+# 3.0.3
+
+**Features**
+
+- Support optional key-value extra info on error messages ([@jensnockert](https://github.com/jensnockert))
+
+**Fixes**
+
+- Stacktraces have bin flipped so the most relevant line is on top ([@jensnockert](https://github.com/jensnockert))
+
 # 3.0.2
 
 **Fixes**
