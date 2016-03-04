@@ -17,11 +17,13 @@ module Opbeat
     def signature_for sql
       return CACHE[sql] if CACHE[sql]
 
-      REGEXES.find do |regex, sig|
+      result = REGEXES.find do |regex, sig|
         if match = sql.match(regex)
           break sig + match[1]
         end
       end
+
+      result || "SQL"
     end
   end
 end
