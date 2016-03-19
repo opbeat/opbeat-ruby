@@ -87,8 +87,20 @@ config.opbeat.filter_parameters += [/regex(p)?/, "string", :symbol]
 
 Opbeat can automatically add user information to errors. By default it looks for at method called `current_user` on the current controller. To change the method use `current_user_method`.
 
-```
+```ruby
 config.opbeat.current_user_method = :current_employee
+```
+
+### Error context
+
+You may specify extra context for errors ahead of time by using `Opbeat.set_context` eg:
+
+```ruby
+class DashboardController < ApplicationController
+  before_filter do
+    Opbeat.set_context(timezone: current_user.timezone)
+  end
+end
 ```
 
 ## Background processing

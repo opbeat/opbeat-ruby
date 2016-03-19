@@ -1,3 +1,13 @@
+# 3.0.4
+
+**Features**
+
+- Added `Opbeat.set_context`.
+
+**Fixes**
+
+- Make the SQL descriptions fall back to just `SQL` ([@jensnockert](https://github.com/jensnockert))
+
 # 3.0.3
 
 **Features**
