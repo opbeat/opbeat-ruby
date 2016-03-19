@@ -80,5 +80,19 @@ module Opbeat
       end
     end
 
+    describe "#add_extra" do
+      it "adds extra info from hash" do
+        error_message = ErrorMessage.new config, "Message"
+        error_message.add_extra(thing: 1)
+        expect(error_message.extra).to eq(thing: 1)
+      end
+      it "merges with current" do
+        error_message = ErrorMessage.new config, "Message"
+        error_message.extra = { other_thing: 2 }
+        error_message.add_extra(thing: 1)
+        expect(error_message.extra).to eq(thing: 1, other_thing: 2)
+      end
+    end
+
   end
 end

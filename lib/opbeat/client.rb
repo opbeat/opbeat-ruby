@@ -169,6 +169,10 @@ module Opbeat
 
     # errors
 
+    def set_context context
+      @context = context
+    end
+
     def report exception, opts = {}
       return if config.disable_errors
       return unless exception
@@ -180,6 +184,7 @@ module Opbeat
       end
 
       error_message = ErrorMessage.from_exception(config, exception, opts)
+      error_message.add_extra(@context) if @context
       data = @data_builders.error_message.build error_message
       enqueue Worker::PostRequest.new('/errors/', data)
     end
@@ -188,6 +193,7 @@ module Opbeat
       return if config.disable_errors
 
       error_message = ErrorMessage.new(config, message, opts)
+      error_message.add_extra(@context) if @context
       data = @data_builders.error_message.build error_message
       enqueue Worker::PostRequest.new('/errors/', data)
     end

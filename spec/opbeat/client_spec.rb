@@ -102,6 +102,18 @@ module Opbeat
         end
       end
 
+      describe "#set_context" do
+        it "sets context for future errors" do
+          subject.set_context(additional_information: 'remember me')
+
+          exception = Exception.new('BOOM')
+          subject.report exception
+
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop.data[:extra]).to eq(additional_information: 'remember me')
+        end
+      end
+
       describe "#report" do
         it "builds and posts an exception" do
           exception = Exception.new('BOOM')

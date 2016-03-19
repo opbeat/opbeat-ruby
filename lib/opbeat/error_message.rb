@@ -71,5 +71,10 @@ module Opbeat
 
       error_message
     end
+
+    def add_extra info
+      @extra ||= {}
+      @extra.merge! info
+    end
   end
 end
