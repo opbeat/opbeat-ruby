@@ -78,6 +78,14 @@ module Opbeat
     client.flush_transactions
   end
 
+  # Sets context for future errors
+  #
+  # @param context [Hash]
+  def self.set_context context
+    return nil unless client
+    client.set_context
+  end
+
   # Send an exception to Opbeat
   #
   # @param exception [Exception]
