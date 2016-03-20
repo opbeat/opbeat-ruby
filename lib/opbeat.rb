@@ -83,7 +83,7 @@ module Opbeat
   # @param context [Hash]
   def self.set_context context
     return nil unless client
-    client.set_context
+    client.set_context context
   end
 
   # Send an exception to Opbeat
