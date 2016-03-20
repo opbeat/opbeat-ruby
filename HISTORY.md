@@ -1,3 +1,9 @@
+# 3.0.6
+
+**Fixes**
+
+- Actually add `Opbeat.set_context`
+
 # 3.0.4
 
 **Features**
