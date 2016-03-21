@@ -16,6 +16,7 @@ module Opbeat
       current_user_method: :current_user,
       environment: ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'default',
       transaction_post_interval: 60,
+      worker_quit_timeout: 5,
 
       disable_performance: false,
       disable_errors: false,
@@ -43,6 +44,7 @@ module Opbeat
     attr_accessor :current_user_method
     attr_accessor :environment
     attr_accessor :transaction_post_interval
+    attr_accessor :worker_quit_timeout
 
     attr_accessor :disable_performance
     attr_accessor :disable_errors
