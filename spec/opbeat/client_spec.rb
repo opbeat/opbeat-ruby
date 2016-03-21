@@ -114,6 +114,51 @@ module Opbeat
         end
       end
 
+      describe "#with_context" do
+        it "sets context for future errors" do
+          subject.with_context(additional_information: 'remember me') do
+            exception = Exception.new('BOOM')
+            subject.report exception
+          end
+
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop.data[:extra]).to eq(additional_information: 'remember me')
+        end
+
+        it "supports nested contexts" do
+          subject.with_context(info: 'a') do
+            subject.with_context(more_info: 'b') do
+              exception = Exception.new('BOOM')
+              subject.report exception
+            end
+          end
+
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop.data[:extra]).to eq(info: 'a', more_info: 'b')
+        end
+
+        it "restores context for future errors" do
+          subject.set_context(info: 'hello')
+
+          subject.with_context(additional_information: 'remember me') do
+          end
+
+          exception = Exception.new('BOOM')
+          subject.report exception
+
+          expect(subject.queue.length).to be 1
+          expect(subject.queue.pop.data[:extra]).to eq(info: 'hello')
+        end
+
+        it "returns what is yielded" do
+          result = subject.with_context(additional_information: 'remember me') do
+            42
+          end
+
+          expect(result).to be 42
+        end
+      end
+
       describe "#report" do
         it "builds and posts an exception" do
           exception = Exception.new('BOOM')

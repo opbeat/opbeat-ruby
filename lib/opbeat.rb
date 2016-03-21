@@ -86,6 +86,19 @@ module Opbeat
     client.set_context context
   end
 
+  # Updates context for errors within the block
+  #
+  # @param context [Hash]
+  # @yield [Trace] Block in which the context is used
+  def self.with_context context, &block
+    unless client
+      return yield if block_given?
+      return nil
+    end
+
+    client.context context, &block
+  end
+
   # Send an exception to Opbeat
   #
   # @param exception [Exception]
