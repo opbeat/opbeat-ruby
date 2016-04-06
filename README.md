@@ -103,6 +103,14 @@ class DashboardController < ApplicationController
 end
 ```
 
+or by specifying it as a block using `Opbeat.context` eg:
+
+```ruby
+Opbeat.with_context(user_id: @user.id) do
+  UserMailer.welcome_email(@user).deliver_now
+end
+```
+
 ## Background processing
 
 Opbeat automatically catches exceptions in [delayed_job](https://github.com/collectiveidea/delayed_job) or [sidekiq](http://sidekiq.org/).

@@ -173,6 +173,16 @@ module Opbeat
       @context = context
     end
 
+    def with_context context, &block
+      current = @context
+
+      set_context((current || {}).merge(context))
+
+      yield if block_given?
+    ensure
+      set_context(current)
+    end
+
     def report exception, opts = {}
       return if config.disable_errors
       return unless exception
