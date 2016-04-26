@@ -15,11 +15,11 @@ matrix:
   exclude:
     # Rails 4.0+ requires ruby 2.0+
     - rvm: 1.9.3
-      Gemfile: gemfiles/Gemfile.rails-4.0.x
+      gemfile: gemfiles/Gemfile.rails-4.0.x
     - rvm: 1.9.3
-      Gemfile: gemfiles/Gemfile.rails-4.1.x
+      gemfile: gemfiles/Gemfile.rails-4.1.x
     - rvm: 1.9.3
-      Gemfile: gemfiles/Gemfile.rails-4.2.x
+      gemfile: gemfiles/Gemfile.rails-4.2.x
 
 notifications:
   email: false
