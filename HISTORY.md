@@ -1,3 +1,10 @@
+# 3.0.7
+
+**Features**
+
+- Add `config.worker_quit_timeout` (default is 5 secs) ([@jensnockert](https://github.com/jensnockert))
+- Add `Opbeat.with_context` for block-specific contexts ([@jensnockert](https://github.com/jensnockert))
+
 # 3.0.6
 
 **Fixes**
