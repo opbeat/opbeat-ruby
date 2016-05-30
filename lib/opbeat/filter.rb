@@ -62,7 +62,7 @@ module Opbeat
     end
 
     def rails_filters
-      if defined?(::Rails) && Rails.application
+      if defined?(::Rails) && Rails.respond_to?(:application) && Rails.application
         if filters = ::Rails.application.config.filter_parameters
           filters.any? ? filters : nil
         end
