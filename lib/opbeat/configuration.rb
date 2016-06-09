@@ -23,6 +23,8 @@ module Opbeat
 
       debug_traces: false,
 
+      view_paths: [],
+
       # for tests
       disable_worker: false
     }.freeze
