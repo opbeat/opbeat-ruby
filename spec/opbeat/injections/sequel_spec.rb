@@ -25,7 +25,7 @@ module Opbeat
         @db[:tests].count
       end.done(true)
 
-      expect(t.traces.length).to be 2
+      expect(t.traces.length).to be 1
       expect(t.traces.last.signature).to eq 'SELECT FROM `tests`'
     end
 
