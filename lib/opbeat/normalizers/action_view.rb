@@ -19,11 +19,11 @@ module Opbeat
         end
 
         def relative_path path
-          root = config.view_paths.find { |p| path.start_with? p }
+          root = config.view_paths.find { |vp| path.start_with? vp }
           type = :app
 
           unless root
-            root = Gem.path.find { |p| path.start_with? p }
+            root = Gem.path.find { |gp| path.start_with? gp }
             type = :gem
           end
 

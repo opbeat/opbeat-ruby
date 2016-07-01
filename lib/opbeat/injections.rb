@@ -37,8 +37,8 @@ module Opbeat
     end
 
     def self.register_require_hook registration
-      registration.require_paths.each do |p|
-        require_hooks[p] = registration
+      registration.require_paths.each do |path|
+        require_hooks[path] = registration
       end
     end
 
@@ -49,8 +49,8 @@ module Opbeat
         installed[registration.const_name] = registration
         registration.install
 
-        registration.require_paths.each do |p|
-          require_hooks.delete p
+        registration.require_paths.each do |path|
+          require_hooks.delete path
         end
       end
     end
