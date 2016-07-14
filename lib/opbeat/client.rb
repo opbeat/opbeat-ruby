@@ -202,6 +202,8 @@ module Opbeat
     def report_message message, opts = {}
       return if config.disable_errors
 
+      ensure_worker_running
+
       error_message = ErrorMessage.new(config, message, opts)
       error_message.add_extra(@context) if @context
       data = @data_builders.error_message.build error_message
