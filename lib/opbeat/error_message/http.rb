@@ -26,7 +26,10 @@ module Opbeat
           {}                                           # env
         )
 
-        env.headers.each do |k, v|
+        # In Rails < 5 ActionDispatch::Request inherits from Hash
+        headers = env.respond_to?(:headers) ? env.headers : env
+
+        headers.each do |k, v|
           next unless k.upcase == k # lower case stuff isn't relevant
 
           if k.match(HTTP_ENV_KEY)
