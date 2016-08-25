@@ -1,3 +1,8 @@
+# 3.0.8
+
+- Add support for Rails 5
+- Fix support for newer versions of Sequel
+
 # 3.0.7
 
 **Features**
