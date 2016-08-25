@@ -1,4 +1,3 @@
-eval_gemfile 'gemfiles/Gemfile.base'
+eval_gemfile 'gemfiles/Gemfile.rails-5.0.x'
 
-gem "rails", ">= 3.0"
 gem 'pry'
