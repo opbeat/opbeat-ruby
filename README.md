@@ -9,17 +9,17 @@
 Add the following to your `Gemfile`:
 
 ```ruby
-gem 'opbeat', '~> 3.0'
+gem 'opbeat', '~> 3.0.8'
 ```
 
-The Opbeat gem adhere to [Semantic
+The Opbeat gem adheres to [Semantic
 Versioning](http://guides.rubygems.org/patterns/#semantic-versioning)
 and so you can safely trust all minor and patch versions (e.g. 3.x.x) to
 be backwards compatible.
 
 ## Usage
 
-### Rails 3 and Rails 4
+### Rails 3/4/5
 
 Add the following to your `config/environments/production.rb`:
 
