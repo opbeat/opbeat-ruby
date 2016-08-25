@@ -1,4 +1,5 @@
 begin
+  require 'active_support'
   require 'delayed_job'
 rescue LoadError
 end
