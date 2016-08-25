@@ -193,10 +193,11 @@ module Opbeat
         exception.set_backtrace caller
       end
 
-      error_message = ErrorMessage.from_exception(config, exception, opts)
-      error_message.add_extra(@context) if @context
-      data = @data_builders.error_message.build error_message
-      enqueue Worker::PostRequest.new('/errors/', data)
+      if error_message = ErrorMessage.from_exception(config, exception, opts)
+        error_message.add_extra(@context) if @context
+        data = @data_builders.error_message.build error_message
+        enqueue Worker::PostRequest.new('/errors/', data)
+      end
     end
 
     def report_message message, opts = {}
