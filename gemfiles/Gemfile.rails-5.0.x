@@ -1,4 +1,4 @@
 eval_gemfile File.expand_path('../Gemfile.base', __FILE__)
 
-gem 'rails', '~> 3.2.0'
-gem 'sinatra'
+gem 'rails', '~> 5.0.0'
+gem 'sinatra', github: 'sinatra'

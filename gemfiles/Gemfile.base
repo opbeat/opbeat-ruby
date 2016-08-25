@@ -13,7 +13,6 @@ gem 'simplecov'
 
 # external libs
 
-gem 'sinatra', github: 'sinatra'
 gem 'redis'
 gem 'fakeredis'
 gem 'sqlite3'
@@ -25,4 +24,3 @@ gem 'resque', require: false
 unless RUBY_VERSION.to_i <= 1
   gem 'sidekiq', require: false
 end
-
