@@ -13,7 +13,7 @@ gem 'simplecov'
 
 # external libs
 
-gem 'sinatra'
+gem 'sinatra', github: 'sinatra'
 gem 'redis'
 gem 'fakeredis'
 gem 'sqlite3'
