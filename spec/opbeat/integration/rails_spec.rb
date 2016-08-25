@@ -20,7 +20,7 @@ describe 'Rails integration' do
     class TinderButForHotDogs < ::Rails::Application
       config.secret_key_base = '__secret_key_base'
 
-      config.logger = Logger.new(nil)
+      config.logger = Logger.new(STDOUT)
       config.logger.level = Logger::DEBUG
 
       config.eager_load = false

@@ -12,13 +12,15 @@ require 'opbeat'
 module Opbeat
   class Configuration
     # Override defaults to enable http (caught by WebMock) in test env
-    defaults = DEFAULTS.dup.merge enabled_environments: %{test}
+    defaults = DEFAULTS.dup.merge enabled_environments: %w{test}
     remove_const(:DEFAULTS)
     const_set(:DEFAULTS, defaults.freeze)
   end
 end
 
 RSpec.configure do |config|
+  config.backtrace_exclusion_patterns += [%r{/gems/}]
+
   config.before :each do
     @request_stub = stub_request(:post, /intake\.opbeat\.com/)
   end

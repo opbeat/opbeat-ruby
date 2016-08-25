@@ -3,7 +3,8 @@ module Opbeat
     module Rails
       module InjectExceptionsCatcher
         def self.included(cls)
-          cls.send(:alias_method_chain, :render_exception, :opbeat)
+          cls.send(:alias_method, :render_exception_without_opbeat, :render_exception)
+          cls.send(:alias_method, :render_exception, :render_exception_with_opbeat)
         end
 
         def render_exception_with_opbeat(env, exception)

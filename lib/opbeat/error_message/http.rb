@@ -26,7 +26,7 @@ module Opbeat
           {}                                           # env
         )
 
-        env.each do |k, v|
+        env.headers.each do |k, v|
           next unless k.upcase == k # lower case stuff isn't relevant
 
           if k.match(HTTP_ENV_KEY)
