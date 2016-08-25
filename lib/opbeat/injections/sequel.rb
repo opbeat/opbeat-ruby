@@ -11,18 +11,21 @@ module Opbeat
         def install
           require 'sequel/database/logging'
 
-          ::Sequel::Database.class_eval do
-            alias log_yield_without_opb log_yield
+          log_method = ::Sequel::Database.method_defined?(:log_connection_yield) ?
+            'log_connection_yield' : 'log_yield'
 
-            def log_yield sql, args = nil, &block
-              log_yield_without_opb(sql, *args) do
+          ::Sequel::Database.class_eval <<-end_eval
+            alias #{log_method}_without_opb #{log_method}
+
+            def #{log_method} sql, *args, &block
+              #{log_method}_without_opb(sql, *args) do
                 sig = Opbeat::Injections::Sequel::Injector.sql_parser.signature_for(sql)
                 Opbeat.trace(sig, KIND, sql: sql) do
                   block.call
                 end
               end
             end
-          end
+          end_eval
         end
       end
     end
