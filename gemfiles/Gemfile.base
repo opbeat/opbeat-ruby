@@ -17,6 +17,7 @@ gem 'redis'
 gem 'fakeredis'
 gem 'sqlite3'
 gem 'sequel'
+gem 'sinatra', github: 'sinatra'
 
 gem 'delayed_job', require: false
 gem 'resque', require: false
