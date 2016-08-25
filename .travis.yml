@@ -26,7 +26,12 @@ matrix:
       gemfile: gemfiles/Gemfile.rails-4.1.x
     - rvm: 1.9.3
       gemfile: gemfiles/Gemfile.rails-4.2.x
+    # Rails 5.0+ requires ruby 2.2+
     - rvm: 1.9.3
+      gemfile: gemfiles/Gemfile.rails-5.0.x
+    - rvm: 2.0.0
+      gemfile: gemfiles/Gemfile.rails-5.0.x
+    - rvm: 2.1.6
       gemfile: gemfiles/Gemfile.rails-5.0.x
 
 notifications:
