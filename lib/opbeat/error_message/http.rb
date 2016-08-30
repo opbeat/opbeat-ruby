@@ -10,7 +10,11 @@ module Opbeat
       QUESTION = "?".freeze
 
       def self.from_rack_env env, opts = {}
-        req = Rack::Request.new env
+        if env.is_a?(ActionDispatch::Request)
+          req = env
+        else
+          req = Rack::Request.new env
+        end
 
         http = new(
           req.url.split(QUESTION).first,               # url

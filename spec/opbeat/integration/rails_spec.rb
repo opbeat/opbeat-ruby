@@ -20,7 +20,7 @@ describe 'Rails integration' do
     class TinderButForHotDogs < ::Rails::Application
       config.secret_key_base = '__secret_key_base'
 
-      config.logger = Logger.new(STDOUT)
+      config.logger = Logger.new(DEBUG ? STDOUT : nil)
       config.logger.level = Logger::DEBUG
 
       config.eager_load = false
@@ -33,7 +33,11 @@ describe 'Rails integration' do
 
     class UsersController < ActionController::Base
       def index
-        render text: 'HOT DOGS!'
+        if Rails.version.to_i >= 5
+          render plain: 'HOT DOGS!'
+        else
+          render text: 'HOT DOGS!'
+        end
       end
 
       def other
