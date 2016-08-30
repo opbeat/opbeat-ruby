@@ -10,7 +10,7 @@ module Opbeat
       QUESTION = "?".freeze
 
       def self.from_rack_env env, opts = {}
-        if env.is_a?(ActionDispatch::Request)
+        if defined?(ActionDispatch::Request) && env.is_a?(ActionDispatch::Request)
           req = env
         else
           req = Rack::Request.new env
