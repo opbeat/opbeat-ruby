@@ -1,5 +1,7 @@
 ENV['RACK_ENV'] = 'test'
 
+DEBUG = ENV.fetch('CI', false)
+
 require 'bundler/setup'
 Bundler.require :default
 require 'timecop'
