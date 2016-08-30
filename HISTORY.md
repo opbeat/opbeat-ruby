@@ -1,3 +1,7 @@
+# 3.0.9
+
+- Fix Rails 5 support
+
 # 3.0.8
 
 - Add support for Rails 5
