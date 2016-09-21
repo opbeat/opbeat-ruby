@@ -97,7 +97,7 @@ You may specify extra context for errors ahead of time by using `Opbeat.set_cont
 
 ```ruby
 class DashboardController < ApplicationController
-  before_filter do
+  before_action do
     Opbeat.set_context(timezone: current_user.timezone)
   end
 end
