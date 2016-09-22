@@ -198,7 +198,7 @@ $ rspec spec
 
 ## Legacy
 
-Be aware that 3.0 is a almost complete rewrite of the Opbeat ruby client. It is not api compliant with version 2 and below.
+Be aware that 3.0 is an almost complete rewrite of the Opbeat ruby client. It is not api compliant with version 2 and below.
 
 ## Resources
 
