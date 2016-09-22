@@ -9,7 +9,7 @@
 Add the following to your `Gemfile`:
 
 ```ruby
-gem 'opbeat', '~> 3.0.8'
+gem 'opbeat', '~> 3.0.9'
 ```
 
 The Opbeat gem adheres to [Semantic
