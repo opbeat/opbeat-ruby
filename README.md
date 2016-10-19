@@ -103,7 +103,7 @@ class DashboardController < ApplicationController
 end
 ```
 
-or by specifying it as a block using `Opbeat.context` eg:
+or by specifying it as a block using `Opbeat.with_context` eg:
 
 ```ruby
 Opbeat.with_context(user_id: @user.id) do
