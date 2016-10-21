@@ -1,7 +1,7 @@
 eval_gemfile File.expand_path('../Gemfile.base', __FILE__)
 
-gem 'rack', github: 'rack/rack', branch: 'master'
-gem 'arel', github: 'rails/arel', branch: 'master'
-gem 'rails', github: 'rails/rails', branch: 'master'
-gem 'sinatra', github: 'sinatra'
+gem 'rack', git: 'https://github.com/rack/rack.git'
+gem 'arel', git: 'https://github.com/rails/arel.git'
+gem 'rails', git: 'https://github.com/rails/rails.git'
+gem 'sinatra', git: 'https://github.com/sinatra/sinatra.git'
 
