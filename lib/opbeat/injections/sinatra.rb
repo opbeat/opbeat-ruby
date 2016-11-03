@@ -39,7 +39,7 @@ module Opbeat
             alias render_without_opb render
 
             def render(*args, &block)
-              sig = options[:__opbeat_template_sig] || 'Uknown template'.freeze
+              sig = options[:__opbeat_template_sig] || 'Unknown template'.freeze
 
               Opbeat.trace sig, KIND do
                 render_without_opb(*args, &block)
