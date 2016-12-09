@@ -9,8 +9,9 @@ module Opbeat
 
             def dispatch!(*args, &block)
               dispatch_without_opb!(*args, &block).tap do
-                if route = env['sinatra.route']
-                  Opbeat.transaction(nil).endpoint = route
+                transaction = Opbeat.transaction(nil)
+                if route = env['sinatra.route'] and transaction
+                  transaction.endpoint = route
                 end
               end
             end
