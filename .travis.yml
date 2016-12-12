@@ -4,7 +4,6 @@ cache: bundler
 env:
   - CI=true
 rvm:
-  - 1.9.3
   - 2.0.0
   - 2.1.6
   - 2.2.3
@@ -21,16 +20,6 @@ matrix:
       gemfile: gemfiles/Gemfile.rails-HEAD
 
   exclude:
-    # Rails 4.0+ requires ruby 2.0+
-    - rvm: 1.9.3
-      gemfile: gemfiles/Gemfile.rails-4.0.x
-    - rvm: 1.9.3
-      gemfile: gemfiles/Gemfile.rails-4.1.x
-    - rvm: 1.9.3
-      gemfile: gemfiles/Gemfile.rails-4.2.x
-    # Rails 5.0+ requires ruby 2.2+
-    - rvm: 1.9.3
-      gemfile: gemfiles/Gemfile.rails-5.0.x
     - rvm: 2.0.0
       gemfile: gemfiles/Gemfile.rails-5.0.x
     - rvm: 2.1.6
