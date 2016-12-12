@@ -1,3 +1,7 @@
+# 3.0.10
+
+- Fix Sinatra with `config.disable_performance` (#44 [@skogsmaskin](https://github.com/skogsmaskin))
+
 # 3.0.9
 
 - Fix Rails 5 support
