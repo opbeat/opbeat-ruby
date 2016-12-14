@@ -121,7 +121,7 @@ To enable Opbeat for [resque](https://github.com/resque/resque), add the followi
 require "resque/failure/multiple"
 require "opbeat/integration/resque"
 
-Resque::Failure::Multiple.classes = [Resque::Failure::Opbeat]
+Resque::Failure::Multiple.classes = [Opbeat::Integration::Resque]
 Resque::Failure.backend = Resque::Failure::Multiple
 ```
 
