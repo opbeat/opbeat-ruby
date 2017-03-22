@@ -29,6 +29,7 @@ module Opbeat
     attr_reader :config
     attr_accessor :message
     attr_reader :timestamp
+    attr_reader :filter
     attr_accessor :level
     attr_accessor :logger
     attr_accessor :culprit
@@ -61,7 +62,7 @@ module Opbeat
       end
 
       if env = opts[:rack_env]
-        error_message.http = HTTP.from_rack_env env, filter: @filter
+        error_message.http = HTTP.from_rack_env env, filter: error_message.filter
         error_message.user = User.from_rack_env config, env
       end
 

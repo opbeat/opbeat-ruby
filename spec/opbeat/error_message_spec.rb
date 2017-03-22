@@ -56,6 +56,12 @@ module Opbeat
           expect(error.http.url).to eq 'http://example.org/'
         end
 
+        it "uses proper filter options" do
+          env = Rack::MockRequest.env_for '/nested/path?foo=bar&password=SECRET'
+          error = ErrorMessage.from_exception config, real_exception, rack_env: env
+          expect(error.http.query_string).to eq "foo=bar&password=[FILTERED]"
+        end
+
         class DummyController
           def current_user
             Struct.new(:id, :email, :username).new(1, 'john@example.com', 'leroy')
