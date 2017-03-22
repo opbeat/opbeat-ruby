@@ -39,13 +39,7 @@ module Opbeat
     end
 
     def sanitize key, value
-      return value unless value.is_a?(String)
-
-      if should_filter?(key)
-        return MASK
-      end
-
-      value
+      should_filter?(key) ? MASK : value
     end
 
     private
@@ -53,7 +47,7 @@ module Opbeat
     def should_filter? key
       @params.any? do |param|
         case param
-        when String
+        when String, Symbol
           key.to_s == param.to_s
         when Regexp
           param.match(key)

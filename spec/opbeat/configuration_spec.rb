@@ -6,6 +6,13 @@ module Opbeat
     it "has defaults" do
       conf = Configuration.new
       expect(conf.timeout).to be 100
+      expect(conf.filter_parameters).to eq [/(authorization|password|passwd|secret)/i]
+    end
+
+    it "overwrites defaults when config given" do
+      conf = Configuration.new(filter_parameters: [:secret])
+      expect(conf.timeout).to be 100
+      expect(conf.filter_parameters).to eq [:secret]
     end
 
     it "can initialize with a hash" do

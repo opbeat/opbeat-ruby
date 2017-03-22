@@ -2,7 +2,9 @@ require 'spec_helper'
 
 module Opbeat
   RSpec.describe Filter do
-    let(:config) { Configuration.new filter_parameters: [/password/, 'passwd'] }
+    let(:config) do 
+      Configuration.new filter_parameters: [/password/, 'pwd', :_secret, :int_secret, 'non_existing']
+    end
 
     subject do
       Filter.new config
@@ -10,13 +12,19 @@ module Opbeat
 
     describe "#apply" do
       it "filters a string" do
-        filtered = subject.apply "password=SECRET&foo=bar"
-        expect(filtered).to eq 'password=[FILTERED]&foo=bar'
+        data = "password=SECRET&foo=bar&_secret=abc&pwd=de1&int_secret=123"
+        filtered_data = "password=[FILTERED]&foo=bar&_secret=[FILTERED]&pwd=[FILTERED]&int_secret=[FILTERED]"
+        expect(subject.apply data).to eq filtered_data
       end
 
       it "filters a hash" do
-        filtered = subject.apply({ passwd: 'SECRET' })
-        expect(filtered).to eq({ passwd: '[FILTERED]' })
+        data = { password: 'SECRET', foo: :bar, _secret: 'abc', pwd: 'de1', int_secret: 123 }
+        filtered_data = { password: '[FILTERED]', 
+                          foo: :bar, 
+                          _secret: '[FILTERED]', 
+                          pwd: '[FILTERED]', 
+                          int_secret: '[FILTERED]'}
+        expect(subject.apply data).to eq filtered_data
       end
     end
   end
