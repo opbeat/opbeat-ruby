@@ -1,3 +1,7 @@
+# 3.0.11
+
+- Fix parameter filtering with symbols (#37 [@simitt](https://github.com/simitt))
+
 # 3.0.10
 
 - Fix Sinatra with `config.disable_performance` (#44 [@skogsmaskin](https://github.com/skogsmaskin))
