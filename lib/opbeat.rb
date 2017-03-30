@@ -96,7 +96,7 @@ module Opbeat
       return nil
     end
 
-    client.context context, &block
+    client.with_context context, &block
   end
 
   # Send an exception to Opbeat
